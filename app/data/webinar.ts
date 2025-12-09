@@ -1,0 +1,41 @@
+export const webinars = [
+  {
+    id: 1,
+    title: "USI ISU Webinar - Renal Transplantation Subsection",
+    startDate: "2026-04-17",
+    endDate: "2026-04-18",
+    time: "7:30 PM to 9:30 PM",
+    type: "USI Webinar",
+    mode: "Virtual",
+    image: "/images/learning.png",
+    price: 0,
+    popularity: 90,
+    description:"This webinar focuses on renal transplantation best practices and case studies.",
+  },
+  {
+    id: 2,
+    title: "Smart Learning - Urology Advances",
+    startDate: "2026-06-20",
+    endDate: "2026-06-21",
+    time: "8:00 PM to 9:30 PM",
+    type: "Smart Learning Program",
+    mode: "Virtual",
+    image: "/images/learning.png",
+    price: 499,
+    popularity: 120,
+    description:"This webinar focuses on renal transplantation best practices and case studies."
+  },
+  {
+    id: 3,
+    title: "USI ISU Webinar - Pediatric Urology",
+    startDate: "2025-11-02",
+    endDate: "2025-11-02",
+    time: "6:00 PM to 8:00 PM",
+    type: "USI Webinar",
+    mode: "Virtual",
+    image: "/images/learning.png",
+    price: 0,
+    popularity: 60,
+    description:"This webinar focuses on renal transplantation best practices and case studies."
+  },
+];
