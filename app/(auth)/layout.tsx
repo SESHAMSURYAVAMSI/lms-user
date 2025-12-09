@@ -49,7 +49,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               className="mb-2"
             />
             <p className="text-lg font-bold text-[#1F5C9E]">USI Webinars</p>
-            <p className="text-xl font-bold text-[#007AFF]">20</p>
+            {/* <p className="text-xl font-bold text-[#007AFF]">20</p> */}
           </div>
 
           {/* Card 2 - Smart Learning Program */}
@@ -62,7 +62,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               className="mb-2"
             />
             <p className="text-lg font-bold text-[#1F5C9E]">Smart Learning Courses</p>
-            <p className="text-xl font-bold text-[#007AFF]">200</p>
+            {/* <p className="text-xl font-bold text-[#007AFF]">200</p> */}
           </div>
 
           {/* Card 3 - Live Operative Workshops */}
@@ -75,7 +75,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               className="mb-2"
             />
             <p className="text-lg font-bold text-[#1F5C9E]">Live Operative Workshops</p>
-            <p className="text-xl font-bold text-[#007AFF]">200</p>
+            {/* <p className="text-xl font-bold text-[#007AFF]">200</p> */}
           </div>
 
           {/* Card 4 - e-Learning Courses */}
@@ -88,7 +88,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               className="mb-2"
             />
             <p className="text-lg font-bold text-[#1F5C9E]">e-Learning Program</p>
-            <p className="text-xl font-bold text-[#007AFF]">40</p>
+            {/* <p className="text-xl font-bold text-[#007AFF]">40</p> */}
           </div>
 
           {/* Card 5 - Live Conferences */}
@@ -101,7 +101,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               className="mb-2"
             />
             <p className="text-lg font-bold text-[#1F5C9E]">Live Conferences</p>
-            <p className="text-xl font-bold text-[#007AFF]">40</p>
+            {/* <p className="text-xl font-bold text-[#007AFF]">40</p> */}
           </div>
         </div>
       </header>

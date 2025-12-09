@@ -1,3 +1,4 @@
+// main webinar meta (used by page.tsx)
 export const webinars = [
   {
     id: 1,
@@ -10,7 +11,6 @@ export const webinars = [
     image: "/images/learning.png",
     price: 0,
     popularity: 90,
-    description:"This webinar focuses on renal transplantation best practices and case studies.",
   },
   {
     id: 2,
@@ -23,7 +23,6 @@ export const webinars = [
     image: "/images/learning.png",
     price: 499,
     popularity: 120,
-    description:"This webinar focuses on renal transplantation best practices and case studies."
   },
   {
     id: 3,
@@ -36,6 +35,29 @@ export const webinars = [
     image: "/images/learning.png",
     price: 0,
     popularity: 60,
-    description:"This webinar focuses on renal transplantation best practices and case studies."
+  },
+  {
+    id: 4,
+    title: "USI Webinar - Renal Transplantation",
+    startDate: "2026-04-17",
+    endDate: "2026-04-18",
+    time: "7:30 PM - 9:30 PM",
+    mode: "Online",
+    image: "/images/learning.png",
+    price: 0,
+    popularity: 120,
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+  },
+  {
+    id: 5,
+    title: "Advanced Cardiology Updates",
+    startDate: "2026-05-05",
+    endDate: "2026-05-05",
+    time: "6:00 PM - 8:00 PM",
+    mode: "Hybrid",
+    image: "/images/learning.png",
+    price: 499,
+    popularity: 340,
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   },
 ];

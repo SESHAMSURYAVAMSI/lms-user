@@ -24,7 +24,7 @@ export interface SideTab {
 
 const sideTabs: SideTab[] = [
   { name: "My Learning", icon: FaBookOpen, baseUrl: "mylearning", subtabs: [] },
-  { name: "Webinar", icon: FaVideo, baseUrl: "webinar", subtabs: [] },
+  { name: "USI Webinar", icon: FaVideo, baseUrl: "webinar", subtabs: [] },
   { name: "Smart Learning Program", icon: FaGraduationCap, baseUrl: "program", subtabs: [] },
   { name: "Live Operative Workshops", icon: FaTools, baseUrl: "workshops", subtabs: [] },
   { name: "eLearning Courses", icon: FaLaptopCode, baseUrl: "elearning", subtabs: [] },
