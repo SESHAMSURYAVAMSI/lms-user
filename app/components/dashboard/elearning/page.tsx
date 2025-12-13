@@ -1,107 +1,146 @@
-'use client';
-//This file is a client component in Next.js, which allows us to use hooks like useState and useEffect. 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+"use client";
 
-export default function ComingSoonPage() {
-  const calculateTimeLeft = () => {
-    const target = new Date("2025-08-01T00:00:00");
-    const now = new Date();
-    const difference = +target - +now;
-    let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import CourseCard from "./CourseCard";
+import RegisterModal from "./RegisterModal";
+import { ChevronDown } from "lucide-react";
+import { ELEARNING_COURSES, type ElearningCourse } from "@/app/data/elearning/elearning";
 
-    if (difference > 0) {
-      timeLeft = {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60),
-      };
-    }
+type Sort = "newest" | "popularity";
 
-    return timeLeft;
-  };
+export default function ElearningPage() {
+  const [q, setQ] = useState("");
+  const [sort, setSort] = useState<Sort>("newest");
+  const [sortOpen, setSortOpen] = useState(false);
+  const router = useRouter();
+  const sortRef = useRef<HTMLDivElement | null>(null);
 
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [isClient, setIsClient] = useState(false);
+  // modal state
+  const [selectedCourse, setSelectedCourse] = useState<ElearningCourse | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
+  // Close sort dropdown on outside click or Escape
   useEffect(() => {
-    setIsClient(true); 
-    setTimeLeft(calculateTimeLeft());
+    const click = (e: MouseEvent) => {
+      if (!sortRef.current) return;
+      if (!sortRef.current.contains(e.target as Node)) setSortOpen(false);
+    };
+    const esc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSortOpen(false);
+    };
 
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
+    document.addEventListener("click", click);
+    document.addEventListener("keydown", esc);
 
-    return () => clearInterval(timer);
+    return () => {
+      document.removeEventListener("click", click);
+      document.removeEventListener("keydown", esc);
+    };
   }, []);
 
+  const openModal = (course: ElearningCourse) => {
+    setSelectedCourse(course);
+    setModalOpen(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedCourse(null);
+    document.body.style.overflow = "";
+  };
+
+  // Search + Sort
+  const webinars = useMemo(() => {
+    const query = q.trim().toLowerCase();
+    let arr = ELEARNING_COURSES.slice();
+
+    const searched = query
+      ? arr.filter(
+          (w) =>
+            w.title.toLowerCase().includes(query) ||
+            (w.type ?? "").toLowerCase().includes(query)
+        )
+      : arr;
+
+    return searched.sort((a, b) =>
+      sort === "newest"
+        ? +new Date(b.startDate) - +new Date(a.startDate)
+        : (b.popularity ?? 0) - (a.popularity ?? 0)
+    );
+  }, [q, sort]);
+
   return (
-    <main className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="text-center max-w-md w-full">
-        <motion.h1
-          className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          Divina is currently working hard on this page!
-        </motion.h1>
+    <div className="p-6 bg-white">
+      {/* Header + Sort */}
+      <div className="mb-4 flex items-start justify-between">
+        <h1 className="text-2xl font-semibold text-[#252641]">eLearning Courses</h1>
 
-        <motion.p
-          className="text-gray-500 mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          Website currently under maintenance
-        </motion.p>
+        {/* Sort Button */}
+        <div ref={sortRef} className="relative">
+          <button
+            onClick={() => setSortOpen((o) => !o)}
+            className="flex items-center gap-2 rounded-md border px-3 py-1.5 bg-orange-50 text-orange-600 text-sm font-medium shadow-sm hover:bg-orange-100 transition"
+          >
+            Sort By
+            <ChevronDown size={14} />
+          </button>
 
-        <motion.div
-          className="flex justify-center mb-6"
-          initial={{ scale: 0.95 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Image
-            src="/images/comming-soon.png"
-            alt="Maintenance"
-            width={300}
-            height={300}
-            className="w-full max-w-xs"
-            priority
-          />
-        </motion.div>
+          {sortOpen && (
+            <div className="absolute right-0 mt-2 w-44 bg-white rounded-md border shadow-lg z-50 overflow-hidden">
+              <button
+                onClick={() => {
+                  setSort("newest");
+                  setSortOpen(false);
+                }}
+                className={`w-full text-left px-3 py-2 text-sm ${sort === "newest" ? "bg-orange-50 text-orange-600" : "text-gray-700 hover:bg-gray-50"}`}
+              >
+                Newest First
+              </button>
 
-        {isClient && (
-          <div className="flex justify-center gap-4 text-lg font-semibold text-gray-800 mb-6">
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.days}</div>
-              <div className="text-sm text-gray-500">Days</div>
+              <button
+                onClick={() => {
+                  setSort("popularity");
+                  setSortOpen(false);
+                }}
+                className={`w-full text-left px-3 py-2 text-sm ${sort === "popularity" ? "bg-orange-50 text-orange-600" : "text-gray-700 hover:bg-gray-50"}`}
+              >
+                Popularity
+              </button>
             </div>
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.hours}</div>
-              <div className="text-sm text-gray-500">Hours</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.minutes}</div>
-              <div className="text-sm text-gray-500">Minutes</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.seconds}</div>
-              <div className="text-sm text-gray-500">Seconds</div>
-            </div>
-          </div>
-        )}
-
-        <Link
-          href="https://saascraft.studio/"
-          className="inline-block bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition"
-        >
-         Owned by SaaScraft Studio (India) Pvt. Ltd.
-        </Link>
+          )}
+        </div>
       </div>
-    </main>
+
+      {/* Search */}
+      <div className="mb-6">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search courses..."
+          className="w-full md:w-96 px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1F5C9E]"
+        />
+      </div>
+
+      {/* Grid - items-stretch ensures h-full cards stretch */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
+        {webinars.map((w: ElearningCourse) => (
+          <CourseCard
+            key={w.id}
+            course={w}
+            // primary button opens modal
+            onPrimaryAction={() => openModal(w)}
+            // optional navigate handler (not required because image/title link)
+            onNavigate={() => router.push(`/elearning/${w.id}`)}
+          />
+        ))}
+      </div>
+
+      {webinars.length === 0 && <p className="text-gray-500 text-center mt-8">No courses found.</p>}
+
+      {/* Register modal */}
+      <RegisterModal open={modalOpen} onClose={closeModal} course={selectedCourse} />
+    </div>
   );
 }
