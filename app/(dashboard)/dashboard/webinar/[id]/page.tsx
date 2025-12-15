@@ -23,12 +23,12 @@ import Quiz from "@/app/components/dashboard/webinar/tabs/Quiz";
 
 import { CalendarDays, Clock, MapPin } from "lucide-react";
 
-export default function WebinarDetail({ params }: { params: any }) {
+export default function WebinarDetail({ params }: { params: { id: string } }) {
   const id = Number(params?.id);
   const router = useRouter();
 
   const w = webinars.find((x) => x.id === id);
-  const overview = overviews[id];
+  const overview = overviews[id as keyof typeof overviews];
   const faculty = facultyByWebinar[id] ?? [];
   const faq = faqByWebinar[id] ?? [];
   const feedbackCfg =
@@ -52,7 +52,6 @@ export default function WebinarDetail({ params }: { params: any }) {
 
   const questionsCount = quiz.length;
   const perQuestionSeconds =
-    overview?.perQuestionSeconds ??
     quizMetaByWebinar[id]?.perQuestionSeconds ??
     30;
 
@@ -114,7 +113,7 @@ export default function WebinarDetail({ params }: { params: any }) {
               </div>
 
               <p className="mt-4 text-gray-700">
-                {overview?.description ?? w.description}
+                {overview?.description}
               </p>
 
               <div className="mt-6 flex gap-4">
@@ -150,7 +149,7 @@ export default function WebinarDetail({ params }: { params: any }) {
               {["overview", "faculty", "faq", "feedback", "quiz"].map((t) => (
                 <button
                   key={t}
-                  onClick={() => setTab(t as any)}
+                  onClick={() => setTab(t as "overview" | "faculty" | "faq" | "feedback" | "quiz")}
                   className={`capitalize px-3 py-1.5 rounded-md text-sm ${
                     tab === t
                       ? "bg-[#E8F3FF] text-[#1F5C9E] font-semibold"
@@ -165,7 +164,7 @@ export default function WebinarDetail({ params }: { params: any }) {
             <div className="mt-6">
               {tab === "overview" && (
                 <Overview
-                  description={overview?.description ?? w.description}
+                  description={overview?.description ?? ""}
                   comments={comments}
                   commentText={commentText}
                   setCommentText={setCommentText}
@@ -180,7 +179,7 @@ export default function WebinarDetail({ params }: { params: any }) {
               {tab === "quiz" && (
                 <Quiz
                   title={w.title}
-                  subtitle={overview?.subtitle ?? "Subsection"}
+                  subtitle="Subsection"
                   durationMinutes={`${durationMinutes} Minutes`}
                   questionsCount={questionsCount || 10}
                   perQuestionSeconds={perQuestionSeconds}

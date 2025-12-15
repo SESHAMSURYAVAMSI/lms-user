@@ -96,7 +96,7 @@ export default function Faculty({ faculty = [] }: { faculty?: FacultyItem[] }) {
     cols = "grid-cols-1",
   }: {
     title: string;
-    icon: any;
+    icon: React.ComponentType<{ className?: string }>;
     items: FacultyItem[];
     cols?: string;
   }) {

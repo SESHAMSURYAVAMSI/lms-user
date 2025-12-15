@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Building, Video, MapPin, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type {
@@ -23,13 +24,13 @@ export default function SpeakerDetails({ speaker, videos }: Props) {
   const renderActionButton = (video: SpeakerVideo) => {
     if (video.userEnrollmentStatus === "ENROLLED") {
       return (
-        <a
+        <Link
           href={`/dashboard/registeredevents/${video.eventId}/video/${video.topicId}`}
         >
           <Button className="bg-green-600 hover:bg-green-700 text-white rounded-full px-5">
             Watch Now
           </Button>
-        </a>
+        </Link>
       );
     }
 
@@ -38,11 +39,11 @@ export default function SpeakerDetails({ speaker, videos }: Props) {
       video.eventRegType === "PAID" ? "Buy Now" : "Register Free";
 
     return (
-      <a href={eventUrl}>
+      <Link href={eventUrl}>
         <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-5">
           {buttonText}
         </Button>
-      </a>
+      </Link>
     );
   };
 
@@ -50,9 +51,9 @@ export default function SpeakerDetails({ speaker, videos }: Props) {
     <div className="space-y-8 p-4 md:p-6">
       {/* Breadcrumb */}
       <div className="flex items-center text-sm text-gray-500 font-medium">
-        <a href="/dashboard/speakers" className="hover:underline">
+        <Link href="/dashboard/speakers" className="hover:underline">
           Speakers
-        </a>
+        </Link>
         <span className="mx-2">{">"}</span>
         <span className="text-orange-600">{speaker.name}</span>
       </div>
@@ -138,12 +139,12 @@ export default function SpeakerDetails({ speaker, videos }: Props) {
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
                   Event –{" "}
-                  <a
+                  <Link
                     href={`/dashboard/events/${video.eventId}`}
                     className="font-semibold text-orange-600 hover:underline"
                   >
                     {video.eventName}
-                  </a>
+                  </Link>
                 </p>
               </div>
 

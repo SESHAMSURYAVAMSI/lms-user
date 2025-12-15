@@ -47,8 +47,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         } else {
           throw new Error(data.error || "Failed to parse user data.");
         }
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: Error | unknown) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
       } finally {
         setLoading(false);
       }

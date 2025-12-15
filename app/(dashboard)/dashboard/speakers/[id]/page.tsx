@@ -22,6 +22,7 @@ export default function SpeakerDetailsPage() {
   return (
     <SpeakerDetails
       speaker={{
+        id: String(id),
         name: speaker.name,
         image: speaker.image,
         affiliation: speaker.institute,

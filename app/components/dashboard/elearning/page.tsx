@@ -54,7 +54,7 @@ export default function ElearningPage() {
   // Search + Sort
   const webinars = useMemo(() => {
     const query = q.trim().toLowerCase();
-    let arr = ELEARNING_COURSES.slice();
+    const arr = ELEARNING_COURSES.slice();
 
     const searched = query
       ? arr.filter(

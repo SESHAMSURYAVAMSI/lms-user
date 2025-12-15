@@ -39,6 +39,7 @@ export default function Quiz({
 
     function animate(ts: number) {
       if (!start) start = ts;
+      if (!circle) return;
       const progress = Math.min((ts - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       circle.style.strokeDashoffset = String(

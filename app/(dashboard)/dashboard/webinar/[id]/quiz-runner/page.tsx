@@ -8,13 +8,19 @@ import { webinars } from "@/app/data/webinar";
 import { quizByWebinar, quizMetaByWebinar } from "@/app/data/webinar/quiz";
 
 /* ---------- helpers ---------- */
+interface AnswerRecord {
+  qid: string | number;
+  selectedIndex: number | null;
+  correctIndex: number;
+}
+
 function formatMMSS(sec: number) {
   const m = Math.floor(sec / 60).toString().padStart(2, "0");
   const s = Math.floor(sec % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 }
 
-export default function QuizRunner({ params }: { params: any }) {
+export default function QuizRunner({ params }: { params: { id: string } }) {
   const id = Number(params?.id);
   const router = useRouter();
 
@@ -26,7 +32,7 @@ export default function QuizRunner({ params }: { params: any }) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(perQuestionSeconds);
-  const [answers, setAnswers] = useState<any[]>([]);
+  const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [finished, setFinished] = useState(false);
 
   const timerRef = useRef<number | null>(null);
@@ -50,7 +56,7 @@ export default function QuizRunner({ params }: { params: any }) {
   }, [index, perQuestionSeconds, finished]);
 
   useEffect(() => {
-    if (timeLeft <= 0 && !finished) handleSubmit(true);
+    if (timeLeft <= 0 && !finished) handleSubmit();
   }, [timeLeft, finished]);
 
   if (!webinar || questions.length === 0) {
@@ -59,7 +65,7 @@ export default function QuizRunner({ params }: { params: any }) {
 
   const q = questions[index];
 
-  function nextQuestion(record: any) {
+  function nextQuestion(record: AnswerRecord) {
     setAnswers((prev) => [...prev, record]);
 
     if (index + 1 >= questions.length) {
@@ -70,7 +76,7 @@ export default function QuizRunner({ params }: { params: any }) {
     setIndex((i) => i + 1);
   }
 
-  function handleSubmit(auto = false) {
+  function handleSubmit() {
     if (timerRef.current) clearInterval(timerRef.current);
 
     nextQuestion({

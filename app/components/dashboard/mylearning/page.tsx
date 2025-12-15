@@ -13,9 +13,20 @@ import { Button } from "@/components/ui/button";
 import { getMyLearningWebinars } from "@/lib/myLearningStorage";
 import { useRouter } from "next/navigation";
 
+/* ✅ STRONG TYPE (FIX FOR `any`) */
+type MyLearningWebinar = {
+  id: number | string;
+  title: string;
+  image: string;
+  date?: string;
+  time?: string;
+  mode?: string;
+  type?: string;
+};
+
 export default function MyLearningPage() {
   const [search, setSearch] = useState("");
-  const [courses, setCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<MyLearningWebinar[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -44,7 +55,7 @@ export default function MyLearningPage() {
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by title or type"
+          placeholder="Search by title"
           className="pl-10 pr-3 py-2.5 border rounded-lg w-full focus:ring-2 focus:ring-blue-200 outline-none"
         />
       </div>
@@ -67,7 +78,7 @@ export default function MyLearningPage() {
 
             {/* Content */}
             <div className="p-5 flex flex-col flex-grow">
-              {/* ✅ Meta stacked vertically */}
+              {/* Meta */}
               <div className="text-sm text-gray-500 space-y-2">
                 {course.date && (
                   <div className="flex items-center gap-2">
@@ -103,7 +114,7 @@ export default function MyLearningPage() {
               </div>
 
               {/* Title */}
-              <h2 className="mt-3 text-lg font-semibold text-[#0d2540] leading-snug min-h-[3rem]">
+              <h2 className="mt-3 text-lg font-semibold text-[#0d2540] min-h-[3rem]">
                 {course.title}
               </h2>
 

@@ -1,12 +1,19 @@
 // app/data/mylearning.ts
 
 export type Course = {
-  id: number;
-  image: string;
+  // id: number;
+  // image: string;
+  // title: string;
+  // date: string;
+  // time: string;
+  // type: string;
+  id: number | string;
   title: string;
-  date: string;
-  time: string;
-  type: string;
+  image: string;
+  date?: string;
+  time?: string;
+  mode?: string;
+  type?: string;
 };
 
 export const courses: Course[] = [
