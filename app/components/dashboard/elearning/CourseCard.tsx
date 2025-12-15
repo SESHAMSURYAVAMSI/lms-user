@@ -39,17 +39,17 @@ export default function CourseCard({
         {/* META */}
         <div className="flex flex-col gap-2 text-xs text-slate-500 mb-3">
           <div className="flex items-center gap-2">
-            <CalendarDays size={14} />
-            <span>{course.dateRange}</span>
+            <CalendarDays size={14} className="text-black"/>
+            <span className="font-medium text-black">{course.dateRange}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <Clock size={14} />
-            <span>{course.time}</span>
+            <Clock size={14} className="text-black" />
+            <span className="font-medium text-black">{course.time}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <MapPin size={14} />
+            <MapPin size={14} className="text-black"/>
             <span className="font-medium text-green-600">
               {course.mode ?? course.type}
             </span>
