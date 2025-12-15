@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 
 import { webinars } from "@/app/data/webinar";
@@ -23,25 +23,29 @@ import Quiz from "@/app/components/dashboard/webinar/tabs/Quiz";
 
 import { CalendarDays, Clock, MapPin } from "lucide-react";
 
-export default function WebinarDetail({ params }: { params: { id: string } }) {
-  const id = Number(params?.id);
+export default function WebinarDetailPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
 
-  const w = webinars.find((x) => x.id === id);
-  const overview = overviews[id as keyof typeof overviews];
-  const faculty = facultyByWebinar[id] ?? [];
-  const faq = faqByWebinar[id] ?? [];
-  const feedbackCfg =
-    feedbackByWebinar[id] ?? { placeholder: "Share your feedback..." };
-  const quiz = quizByWebinar[id] ?? [];
+  const id = Number(params.id);
 
   const [tab, setTab] =
     useState<"overview" | "faculty" | "faq" | "feedback" | "quiz">("overview");
+
   const [registerOpen, setRegisterOpen] = useState(false);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
 
-  const [comments, setComments] = useState(overview?.comments ?? []);
+  const [comments, setComments] = useState<{ id: string; text: string; author: string }[]>([]);
   const [commentText, setCommentText] = useState("");
+
+  const w = webinars.find((x) => x.id === id);
+
+  const overview = overviews[id as keyof typeof overviews];
+  const faculty = facultyByWebinar[id as keyof typeof facultyByWebinar] ?? [];
+  const faq = faqByWebinar[id as keyof typeof faqByWebinar] ?? [];
+  const feedbackCfg =
+    feedbackByWebinar[id as keyof typeof feedbackByWebinar] ?? { placeholder: "Share your feedback..." };
+  const quiz = quizByWebinar[id as keyof typeof quizByWebinar] ?? [];
 
   useEffect(() => {
     setComments(overview?.comments ?? []);
@@ -52,8 +56,7 @@ export default function WebinarDetail({ params }: { params: { id: string } }) {
 
   const questionsCount = quiz.length;
   const perQuestionSeconds =
-    quizMetaByWebinar[id]?.perQuestionSeconds ??
-    30;
+    quizMetaByWebinar[id]?.perQuestionSeconds ?? 30;
 
   const durationMinutes =
     Math.ceil((questionsCount * perQuestionSeconds) / 60) || 5;
@@ -61,8 +64,8 @@ export default function WebinarDetail({ params }: { params: { id: string } }) {
   return (
     <div className="p-8 max-w-7xl mx-auto">
 
-      {/* ===== BREADCRUMB (BUTTON STYLE) ===== */}
-      <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
+      {/* Breadcrumb */}
+      <div className="mb-4 flex items-center gap-2 text-sm">
         <button
           onClick={() => router.push("/dashboard/webinar")}
           className="text-orange-600 hover:underline font-medium"
@@ -70,21 +73,16 @@ export default function WebinarDetail({ params }: { params: { id: string } }) {
           Webinar
         </button>
         <span className="text-gray-400">{">"}</span>
-        <button
-          disabled
-          className="text-orange-600 font-medium cursor-default"
-        >
-          {w.title}
-        </button>
+        <span className="text-orange-600 font-medium">{w.title}</span>
       </div>
 
-      {/* ====== MAIN TWO-COLUMN LAYOUT ====== */}
+      {/* Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
 
-        {/* ========= LEFT COLUMN ========= */}
+        {/* LEFT */}
         <div className="space-y-6">
 
-          {/* VIDEO CARD */}
+          {/* Video */}
           <div className="bg-white rounded-2xl shadow overflow-hidden">
             <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
               <iframe
@@ -143,13 +141,15 @@ export default function WebinarDetail({ params }: { params: { id: string } }) {
             </div>
           </div>
 
-          {/* ====== TABS + CONTENT ====== */}
+          {/* Tabs */}
           <div className="bg-white rounded-2xl shadow p-4">
             <div className="flex gap-3 border-b pb-3 overflow-x-auto">
               {["overview", "faculty", "faq", "feedback", "quiz"].map((t) => (
                 <button
                   key={t}
-                  onClick={() => setTab(t as "overview" | "faculty" | "faq" | "feedback" | "quiz")}
+                  onClick={() =>
+                    setTab(t as "overview" | "faculty" | "faq" | "feedback" | "quiz")
+                  }
                   className={`capitalize px-3 py-1.5 rounded-md text-sm ${
                     tab === t
                       ? "bg-[#E8F3FF] text-[#1F5C9E] font-semibold"
@@ -192,7 +192,7 @@ export default function WebinarDetail({ params }: { params: { id: string } }) {
           </div>
         </div>
 
-        {/* ========= RIGHT COLUMN (SPONSOR) ========= */}
+        {/* RIGHT – SPONSOR */}
         <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center sticky top-6 h-fit">
           <p className="text-xs text-gray-500 mb-4 text-center">
             EDUCATIONAL GRANT BY
@@ -207,7 +207,7 @@ export default function WebinarDetail({ params }: { params: { id: string } }) {
         </div>
       </div>
 
-      {/* ====== MODALS ====== */}
+      {/* Modals */}
       <Modal
         open={registerOpen}
         onClose={() => setRegisterOpen(false)}
