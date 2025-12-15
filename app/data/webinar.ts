@@ -11,6 +11,7 @@ export const webinars = [
     image: "/images/learning.png",
     price: 0,
     popularity: 90,
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   },
   {
     id: 2,
@@ -23,6 +24,7 @@ export const webinars = [
     image: "/images/learning.png",
     price: 499,
     popularity: 120,
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   },
   {
     id: 3,
@@ -35,6 +37,7 @@ export const webinars = [
     image: "/images/learning.png",
     price: 0,
     popularity: 60,
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   },
   {
     id: 4,
@@ -42,7 +45,8 @@ export const webinars = [
     startDate: "2026-04-17",
     endDate: "2026-04-18",
     time: "7:30 PM - 9:30 PM",
-    mode: "Online",
+    type: "USI Webinar",
+    mode: "Virtual",
     image: "/images/learning.png",
     price: 0,
     popularity: 120,
@@ -54,7 +58,8 @@ export const webinars = [
     startDate: "2026-05-05",
     endDate: "2026-05-05",
     time: "6:00 PM - 8:00 PM",
-    mode: "Hybrid",
+    type: "USI Webinar",
+    mode: "Virtual",
     image: "/images/learning.png",
     price: 499,
     popularity: 340,

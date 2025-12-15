@@ -9,14 +9,14 @@ export const overviews = {
       {
         id: "c1",
         author: "Jane Doe",
-        profile: "/images/users/jane.jpg",
+        profile: "/images/dravatar.png",
         text: "Excellent session last time!",
         date: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
       },
       {
         id: "c2",
         author: "John Smith",
-        profile: "/images/users/john.png",
+        profile: "/images/dravatar.png",
         text: "Looking forward to this.",
         date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
       },

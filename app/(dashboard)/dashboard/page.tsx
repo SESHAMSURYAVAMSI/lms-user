@@ -1,4 +1,4 @@
-import ComingSoonPage from "@/app/components/dashboard/webinar/page";
+import ComingSoonPage from "@/app/components/dashboard/mylearning/page";
 
 export default function Page() {
   return <ComingSoonPage />;

@@ -1,94 +1,118 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
+import {
+  Briefcase,
+  Building2,
+  MapPin,
+  Award,
+  Users,
+  GraduationCap,
+} from "lucide-react";
 
 type FacultyItem = {
   id?: string | number;
   role?: "convenor" | "co-convenor" | "faculty" | string;
   name: string;
-  title?: string;        // e.g. "Urologic Oncologist"
-  institution?: string;  // e.g. "AIIMS Delhi"
-  location?: string;     // e.g. "Tamil Nadu, India"
-  photo?: string;        // path under /public e.g. "/images/users/dr1.jpg"
+  title?: string;
+  institution?: string;
+  location?: string;
+  photo?: string;
 };
 
-export default function Faculty({ faculty }: { faculty?: FacultyItem[] }) {
-  // safety
-  const list = faculty ?? [];
+export default function Faculty({ faculty = [] }: { faculty?: FacultyItem[] }) {
+  const byRole = (role: string) =>
+    faculty.filter((f) => f.role?.toLowerCase() === role);
 
-  // Group helpers
-  const groupByRole = (role: string) =>
-    list.filter((f) => (f.role || "").toLowerCase() === role);
-
-  const convenors = groupByRole("convenor");
-  const coConvenors = groupByRole("co-convenor");
-  // remaining faculty (exclude convenors & co-convenors)
-  const others = list.filter(
-    (f) =>
-      !["convenor", "co-convenor"].includes((f.role || "").toLowerCase())
+  const convenor = byRole("convenor");
+  const coConvenor = byRole("co-convenor");
+  const others = faculty.filter(
+    (f) => !["convenor", "co-convenor"].includes(f.role?.toLowerCase() || "")
   );
 
-  function PersonCard({ f }: { f: FacultyItem }) {
+  /* ================= CARD ================= */
+  function Card({ f }: { f: FacultyItem }) {
     return (
-      <div className="bg-white border rounded-lg p-4 flex items-start gap-4 shadow-sm">
-        {/* avatar */}
-        <div className="flex-shrink-0">
+      <div className="border rounded-xl p-4 flex gap-4 bg-white">
+        {/* Avatar */}
+        <div className="w-20 h-20 rounded-full bg-[#E5E7EB] flex items-center justify-center overflow-hidden shrink-0">
           {f.photo ? (
-            <img
+            <Image
               src={f.photo}
               alt={f.name}
-              className="w-20 h-20 rounded-full object-cover"
+              width={80}
+              height={80}
+              className="object-cover"
             />
           ) : (
-            <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 font-semibold">
+            <span className="text-xl font-semibold text-gray-600">
               {f.name
                 .split(" ")
-                .map((n) => n[0] ?? "")
+                .map((n) => n[0])
                 .slice(0, 2)
                 .join("")
                 .toUpperCase()}
-            </div>
+            </span>
           )}
         </div>
 
-        {/* details */}
-        <div className="flex-1">
-          <div className="text-sm">
-            <div className="text-[#1F5C9E] font-semibold text-base">{f.name}</div>
-            {f.title && <div className="text-sm text-gray-600 mt-1">{f.title}</div>}
-            {f.institution && (
-              <div className="text-sm text-gray-600 mt-2 flex items-center gap-2">
-                <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2L3 7v7c0 5 5 9 9 9s9-4 9-9V7l-9-5z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span>{f.institution}</span>
-              </div>
-            )}
-            {f.location && (
-              <div className="text-sm text-gray-500 mt-1 flex items-center gap-2">
-                <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none">
-                  <path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.2"/>
-                </svg>
-                <span>{f.location}</span>
-              </div>
-            )}
-          </div>
+        {/* Info */}
+        <div className="space-y-1">
+          <h3 className="text-[#1F5C9E] font-semibold">
+            {f.name}
+          </h3>
+
+          {f.title && (
+            <div className="flex items-center gap-2 text-sm text-black-700">
+              <Briefcase size={14} />
+              <span>{f.title}</span>
+            </div>
+          )}
+
+          {f.institution && (
+            <div className="flex items-center gap-2 text-sm text-black-700">
+              <Building2 size={14} />
+              <span>{f.institution}</span>
+            </div>
+          )}
+
+          {f.location && (
+            <div className="flex items-center gap-2 text-sm text-black-700">
+              <MapPin size={14} />
+              <span>{f.location}</span>
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
-  // Render a section with heading and grid
-  function Section({ title, items }: { title: string; items: FacultyItem[] }) {
-    if (!items || items.length === 0) return null;
-    return (
-      <div className="mb-6">
-        <h4 className="text-lg font-semibold mb-4">{title}</h4>
+  /* ================= SECTION ================= */
+  function Section({
+    title,
+    icon: Icon,
+    items,
+    cols = "grid-cols-1",
+  }: {
+    title: string;
+    icon: any;
+    items: FacultyItem[];
+    cols?: string;
+  }) {
+    if (!items.length) return null;
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {items.map((f, idx) => (
-            <PersonCard key={f.id ?? idx} f={f} />
+    return (
+      <div className="mb-10">
+        {/* TITLE WITH ICON */}
+        <h2 className="flex items-center gap-2 text-lg font-semibold mb-4">
+          <Icon className="w-5 h-5 text-[#1F5C9E]" />
+          {title}
+        </h2>
+
+        <div className={`grid ${cols} gap-6`}>
+          {items.map((f, i) => (
+            <Card key={f.id ?? i} f={f} />
           ))}
         </div>
       </div>
@@ -97,18 +121,34 @@ export default function Faculty({ faculty }: { faculty?: FacultyItem[] }) {
 
   return (
     <div>
-      {/* show convenor first */}
-      <Section title="Convenor" items={convenors} />
+      {/* Convenor */}
+      <Section
+        title="Convenor"
+        icon={Award}
+        items={convenor}
+        cols="grid-cols-1 max-w-md"
+      />
 
-      {/* co-convenor */}
-      <Section title="Co - Convenor" items={coConvenors} />
+      {/* Co-Convenor */}
+      <Section
+        title="Co - Convenor"
+        icon={Users}
+        items={coConvenor}
+        cols="grid-cols-1 md:grid-cols-2"
+      />
 
-      {/* remaining faculty */}
-      <Section title="Faculty" items={others} />
+      {/* Faculty */}
+      <Section
+        title="Faculty"
+        icon={GraduationCap}
+        items={others}
+        cols="grid-cols-1 md:grid-cols-2"
+      />
 
-      {/* fallback if nothing */}
-      {list.length === 0 && (
-        <div className="text-gray-600">No faculty information available.</div>
+      {faculty.length === 0 && (
+        <p className="text-gray-500">
+          No faculty information available.
+        </p>
       )}
     </div>
   );

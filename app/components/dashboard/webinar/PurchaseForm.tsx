@@ -1,8 +1,18 @@
 "use client";
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { addToMyLearning } from "@/lib/myLearningStorage";
 
-export default function PurchaseForm({ webinarId, price, onDone }: { webinarId: string; price: number; onDone?: () => void; }) {
+export default function PurchaseForm({
+  webinarId,
+  price,
+  onDone,
+}: {
+  webinarId: string;
+  price: number;
+  onDone?: () => void;
+}) {
   const router = useRouter();
   const [card, setCard] = useState("");
   const [name, setName] = useState("");
@@ -10,30 +20,78 @@ export default function PurchaseForm({ webinarId, price, onDone }: { webinarId: 
 
   function handlePay(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!name.trim() || !card.trim()) {
+      alert("Please enter valid card details.");
+      return;
+    }
+
     setLoading(true);
+
+    // ⏳ simulate payment gateway
     setTimeout(() => {
+      // ✅ ADD TO MY LEARNING
+      addToMyLearning(Number(webinarId));
+
       setLoading(false);
-      alert(`Payment successful for webinar ${webinarId}. Amount: ₹${price}`);
-      if (onDone) onDone();
+      alert(`Payment successful! Amount: ₹${price}`);
+
+      if (onDone) onDone(); // close modal
     }, 900);
   }
 
   return (
     <form onSubmit={handlePay} className="space-y-4">
+      <h2 className="text-lg font-semibold text-center text-orange-600">
+        Secure Payment
+      </h2>
+
       <div>
-        <label className="block text-sm text-gray-600">Cardholder name</label>
-        <input value={name} onChange={(e)=>setName(e.target.value)} required className="mt-1 w-full border rounded px-3 py-2" />
+        <label className="block text-sm text-gray-600">
+          Cardholder Name
+        </label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="mt-1 w-full border rounded px-3 py-2 focus:ring-2 focus:ring-orange-400 outline-none"
+        />
       </div>
+
       <div>
-        <label className="block text-sm text-gray-600">Card number</label>
-        <input value={card} onChange={(e)=>setCard(e.target.value)} required className="mt-1 w-full border rounded px-3 py-2" placeholder="4242 4242 4242 4242" />
+        <label className="block text-sm text-gray-600">
+          Card Number
+        </label>
+        <input
+          value={card}
+          onChange={(e) => setCard(e.target.value)}
+          required
+          placeholder="4242 4242 4242 4242"
+          className="mt-1 w-full border rounded px-3 py-2 focus:ring-2 focus:ring-orange-400 outline-none"
+        />
       </div>
-      <p className="text-sm text-gray-600">Amount: <strong>₹{price}</strong></p>
-      <div className="flex items-center gap-3">
-        <button disabled={loading} type="submit" className="px-4 py-2 bg-orange-500 text-white rounded">
+
+      <p className="text-sm text-gray-600">
+        Amount to Pay:{" "}
+        <strong className="text-orange-600">₹{price}</strong>
+      </p>
+
+      <div className="flex items-center gap-3 pt-2">
+        <button
+          disabled={loading}
+          type="submit"
+          className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded disabled:opacity-60"
+        >
           {loading ? "Processing..." : "Pay Now"}
         </button>
-        <button type="button" onClick={() => router.back()} className="px-3 py-2 border rounded">Cancel</button>
+
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="px-3 py-2 border rounded"
+        >
+          Cancel
+        </button>
       </div>
     </form>
   );

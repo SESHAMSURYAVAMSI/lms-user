@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
-
+/* ================= TYPES ================= */
 type Comment = {
   id: string;
   author: string;
@@ -19,21 +20,22 @@ type Props = {
   onAddComment: () => void;
 };
 
-/** Avatar: uses image if provided, otherwise initials fallback */
-function Avatar({ name, profile, size = 40 }: { name: string; profile?: string; size?: number }) {
-  const style = { width: size, height: size };
+type LoggedUser = {
+  fullName?: string;
+  profilePhoto?: string;
+};
 
-  if (profile) {
-    return (
-      // use native <img> so path relative to /public works
-      <img
-        src={profile}
-        alt={name}
-        style={style}
-        className="rounded-full object-cover"
-      />
-    );
-  }
+/* ================= AVATAR ================= */
+function Avatar({
+  name,
+  profile,
+  size = 40,
+}: {
+  name: string;
+  profile?: string;
+  size?: number;
+}) {
+  const [error, setError] = useState(false);
 
   const initials = name
     .split(" ")
@@ -42,9 +44,26 @@ function Avatar({ name, profile, size = 40 }: { name: string; profile?: string; 
     .join("")
     .toUpperCase();
 
+  if (profile && !error) {
+    return (
+      <div
+        style={{ width: size, height: size }}
+        className="relative rounded-full overflow-hidden"
+      >
+        <Image
+          src={profile}
+          alt={name}
+          fill
+          className="object-cover"
+          onError={() => setError(true)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
-      style={style}
+      style={{ width: size, height: size }}
       className="rounded-full bg-[#f1f5f9] flex items-center justify-center text-[#1F5C9E] font-semibold"
     >
       {initials}
@@ -52,24 +71,20 @@ function Avatar({ name, profile, size = 40 }: { name: string; profile?: string; 
   );
 }
 
-/** human-friendly relative time */
+/* ================= TIME FORMAT ================= */
 function timeAgo(iso?: string) {
   if (!iso) return "just now";
-  const then = new Date(iso).getTime();
-  const diff = Date.now() - then;
-  const mins = Math.floor(diff / (60 * 1000));
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
   if (mins < 1) return "just now";
-  if (mins < 60) return `${mins} min${mins > 1 ? "s" : ""} ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `${days} day${days > 1 ? "s" : ""} ago`;
-  const weeks = Math.floor(days / 7);
-  if (weeks < 4) return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
-  const months = Math.floor(days / 30);
-  return `${months} month${months > 1 ? "s" : ""} ago`;
+  if (mins < 60) return `${mins} mins ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hours ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} days ago`;
 }
 
+/* ================= COMPONENT ================= */
 export default function Overview({
   description,
   comments,
@@ -77,23 +92,46 @@ export default function Overview({
   setCommentText,
   onAddComment,
 }: Props) {
+  const [user, setUser] = useState<LoggedUser | null>(null);
+
+  /* ✅ READ PROFILE FROM LOCAL STORAGE */
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch {
+        setUser(null);
+      }
+    }
+  }, []);
+
+  const userName = user?.fullName || "You";
+  const userProfile = user?.profilePhoto;
+
   return (
     <div className="space-y-6">
-      {/* ABOUT WEBINAR BOX */}
+      {/* ABOUT WEBINAR */}
       <div className="border rounded-2xl p-6 bg-white">
         <h3 className="text-lg font-semibold">About Webinar</h3>
-        <p className="mt-3 text-gray-600 leading-relaxed">{description}</p>
+        <p className="mt-3 text-gray-600 leading-relaxed">
+          {description}
+        </p>
       </div>
 
-      {/* ADD YOUR COMMENT BOX */}
+      {/* ADD COMMENT */}
       <div className="border rounded-2xl p-6 bg-white">
-        <h4 className="text-md font-semibold mb-4">Add Your Comment</h4>
+        <h4 className="text-md font-semibold mb-4">
+          Add Your Comment
+        </h4>
 
         <div className="flex gap-4">
-          <div className="flex-shrink-0">
-            {/* show your profile if available; adjust path to your user's image */}
-            <Avatar name="You" profile="/images/users/my-profile.jpg" size={44} />
-          </div>
+          {/* ✅ AUTO PROFILE IMAGE */}
+          <Avatar
+            name={userName}
+            profile={userProfile}
+            size={44}
+          />
 
           <div className="flex-1">
             <div className="border rounded-lg p-3">
@@ -106,7 +144,7 @@ export default function Overview({
               />
             </div>
 
-            <div className="mt-3 flex items-center justify-end gap-3">
+            <div className="mt-3 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setCommentText("")}
@@ -127,36 +165,40 @@ export default function Overview({
         </div>
       </div>
 
-      {/* COMMENTS BOX */}
+      {/* COMMENTS LIST */}
       <div className="border rounded-2xl p-6 bg-white">
-        <div className="flex items-center justify-between mb-4">
-          <h4 className="text-lg font-semibold">Comments ({comments.length})</h4>
-          <div className="text-sm text-gray-500">Most recent first</div>
+        <div className="flex justify-between mb-4">
+          <h4 className="text-lg font-semibold">
+            Comments ({comments.length})
+          </h4>
+          <span className="text-sm text-gray-500">
+            Most recent first
+          </span>
         </div>
 
-        <div className="space-y-4">
-          {comments.length === 0 && (
-            <div className="text-gray-500">No comments yet.</div>
-          )}
+        {comments.length === 0 && (
+          <p className="text-gray-500">No comments yet.</p>
+        )}
 
+        <div className="space-y-4">
           {comments.map((c) => (
             <div key={c.id} className="border-t pt-4">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
-                  <Avatar name={c.author} profile={c.profile} size={40} />
-                </div>
+              <div className="flex gap-4">
+                <Avatar
+                  name={c.author}
+                  profile={c.profile}
+                  size={40}
+                />
 
                 <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-sm">{c.author}</div>
-                      <div className="text-xs text-gray-400">{timeAgo(c.date)}</div>
-                    </div>
+                  <p className="font-medium text-sm">{c.author}</p>
+                  <p className="text-xs text-gray-400">
+                    {timeAgo(c.date)}
+                  </p>
 
-                    <div className="text-xs text-gray-400">•</div>
-                  </div>
-
-                  <div className="mt-3 text-sm text-gray-700 leading-relaxed">{c.text}</div>
+                  <p className="mt-3 text-sm text-gray-700 leading-relaxed">
+                    {c.text}
+                  </p>
                 </div>
               </div>
             </div>

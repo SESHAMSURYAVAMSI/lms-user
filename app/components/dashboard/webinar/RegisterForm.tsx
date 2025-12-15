@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { addToMyLearning } from "@/lib/myLearningStorage";
 
 export default function RegisterForm({
   webinarId,
@@ -10,11 +11,24 @@ export default function RegisterForm({
   onDone: () => void;
 }) {
   const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function submit() {
-    if (!value.trim()) return alert("Please enter a valid membership number, email, or phone.");
-    alert("Registered successfully!");
-    onDone(); // close modal
+    if (!value.trim()) {
+      alert("Please enter a valid membership number, email, or phone.");
+      return;
+    }
+
+    setLoading(true);
+
+    // ✅ SAVE TO MY LEARNING
+    addToMyLearning(Number(webinarId));
+
+    setTimeout(() => {
+      alert("Registered successfully!");
+      setLoading(false);
+      onDone(); // close modal
+    }, 600);
   }
 
   return (
@@ -28,7 +42,7 @@ export default function RegisterForm({
       </h3>
 
       <p className="text-center text-gray-600 text-sm">
-        Enter your USI membership number / registered email / or phone number.
+        Enter your USI membership number / registered email / phone number.
       </p>
 
       <input
@@ -40,9 +54,10 @@ export default function RegisterForm({
 
       <button
         onClick={submit}
-        className="w-full px-4 py-2 bg-[#1F5C9E] text-white rounded-md mt-2 hover:bg-[#FFB347] transition"
+        disabled={loading}
+        className="w-full px-4 py-2 bg-[#1F5C9E] text-white rounded-md hover:bg-[#FFB347] transition disabled:opacity-60"
       >
-        Submit
+        {loading ? "Submitting..." : "Submit"}
       </button>
     </div>
   );
