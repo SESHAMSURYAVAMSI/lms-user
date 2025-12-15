@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 /* ================= TYPES ================= */
@@ -54,6 +54,7 @@ function Avatar({
           src={profile}
           alt={name}
           fill
+          sizes="40px"
           className="object-cover"
           onError={() => setError(true)}
         />
@@ -74,14 +75,18 @@ function Avatar({
 /* ================= TIME FORMAT ================= */
 function timeAgo(iso?: string) {
   if (!iso) return "just now";
+
   const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60000);
+
   if (mins < 1) return "just now";
-  if (mins < 60) return `${mins} mins ago`;
+  if (mins < 60) return `${mins} min${mins > 1 ? "s" : ""} ago`;
+
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs} hours ago`;
+  if (hrs < 24) return `${hrs} hour${hrs > 1 ? "s" : ""} ago`;
+
   const days = Math.floor(hrs / 24);
-  return `${days} days ago`;
+  return `${days} day${days > 1 ? "s" : ""} ago`;
 }
 
 /* ================= COMPONENT ================= */
@@ -94,15 +99,15 @@ export default function Overview({
 }: Props) {
   const [user, setUser] = useState<LoggedUser | null>(null);
 
-  /* ✅ READ PROFILE FROM LOCAL STORAGE */
+  /* ✅ READ PROFILE FROM LOCAL STORAGE SAFELY */
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) {
-      try {
+    try {
+      const stored = localStorage.getItem("user");
+      if (stored) {
         setUser(JSON.parse(stored));
-      } catch {
-        setUser(null);
       }
+    } catch {
+      setUser(null);
     }
   }, []);
 
@@ -126,7 +131,6 @@ export default function Overview({
         </h4>
 
         <div className="flex gap-4">
-          {/* ✅ AUTO PROFILE IMAGE */}
           <Avatar
             name={userName}
             profile={userProfile}
@@ -191,7 +195,9 @@ export default function Overview({
                 />
 
                 <div className="flex-1">
-                  <p className="font-medium text-sm">{c.author}</p>
+                  <p className="font-medium text-sm">
+                    {c.author}
+                  </p>
                   <p className="text-xs text-gray-400">
                     {timeAgo(c.date)}
                   </p>

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
 import { webinars } from "@/app/data/webinar";
@@ -23,36 +23,37 @@ import Quiz from "@/app/components/dashboard/webinar/tabs/Quiz";
 
 import { CalendarDays, Clock, MapPin } from "lucide-react";
 
+/* ================= TYPES ================= */
+type TabType = "overview" | "faculty" | "faq" | "feedback" | "quiz";
+
 export default function WebinarDetailPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
-
   const id = Number(params.id);
 
-  const [tab, setTab] =
-    useState<"overview" | "faculty" | "faq" | "feedback" | "quiz">("overview");
+  const webinar = webinars.find((w) => w.id === id);
+  const overview = overviews[id as keyof typeof overviews];
+  const faculty = facultyByWebinar[id] ?? [];
+  const faq = faqByWebinar[id] ?? [];
+  const feedbackCfg =
+    feedbackByWebinar[id] ?? { placeholder: "Share your feedback..." };
+  const quiz = quizByWebinar[id] ?? [];
 
+  const [tab, setTab] = useState<TabType>("overview");
   const [registerOpen, setRegisterOpen] = useState(false);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
 
-  const [comments, setComments] = useState<{ id: string; text: string; author: string }[]>([]);
+  const [comments, setComments] = useState(overview?.comments ?? []);
   const [commentText, setCommentText] = useState("");
-
-  const w = webinars.find((x) => x.id === id);
-
-  const overview = overviews[id as keyof typeof overviews];
-  const faculty = facultyByWebinar[id as keyof typeof facultyByWebinar] ?? [];
-  const faq = faqByWebinar[id as keyof typeof faqByWebinar] ?? [];
-  const feedbackCfg =
-    feedbackByWebinar[id as keyof typeof feedbackByWebinar] ?? { placeholder: "Share your feedback..." };
-  const quiz = quizByWebinar[id as keyof typeof quizByWebinar] ?? [];
 
   useEffect(() => {
     setComments(overview?.comments ?? []);
     setCommentText("");
-  }, [overview?.comments]);
+  }, [overview]);
 
-  if (!w) return <div className="p-8">Webinar not found</div>;
+  if (!webinar) {
+    return <div className="p-8 text-center">Webinar not found</div>;
+  }
 
   const questionsCount = quiz.length;
   const perQuestionSeconds =
@@ -63,31 +64,30 @@ export default function WebinarDetailPage() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-
-      {/* Breadcrumb */}
+      {/* ===== Breadcrumb ===== */}
       <div className="mb-4 flex items-center gap-2 text-sm">
         <button
           onClick={() => router.push("/dashboard/webinar")}
-          className="text-orange-600 hover:underline font-medium"
+          className="text-orange-600 font-medium hover:underline"
         >
           Webinar
         </button>
         <span className="text-gray-400">{">"}</span>
-        <span className="text-orange-600 font-medium">{w.title}</span>
+        <span className="text-gray-600 font-medium">
+          {webinar.title}
+        </span>
       </div>
 
-      {/* Layout */}
+      {/* ===== Layout ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
-
         {/* LEFT */}
         <div className="space-y-6">
-
           {/* Video */}
           <div className="bg-white rounded-2xl shadow overflow-hidden">
-            <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+            <div className="relative w-full pt-[56.25%]">
               <iframe
-                src={w.videoUrl ?? ""}
-                title={w.title}
+                src={webinar.videoUrl ?? ""}
+                title={webinar.title}
                 className="absolute inset-0 w-full h-full"
                 allowFullScreen
               />
@@ -95,18 +95,21 @@ export default function WebinarDetailPage() {
 
             <div className="p-6">
               <h1 className="text-2xl font-semibold text-[#252641]">
-                {w.title}
+                {webinar.title}
               </h1>
 
               <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-700">
                 <div className="flex items-center gap-2">
-                  <CalendarDays size={16} /> {w.startDate} - {w.endDate}
+                  <CalendarDays size={16} />
+                  {webinar.startDate} - {webinar.endDate}
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock size={16} /> {w.time}
+                  <Clock size={16} />
+                  {webinar.time}
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPin size={16} /> {w.mode}
+                  <MapPin size={16} />
+                  {webinar.mode}
                 </div>
               </div>
 
@@ -115,12 +118,12 @@ export default function WebinarDetailPage() {
               </p>
 
               <div className="mt-6 flex gap-4">
-                {w.price && w.price > 0 ? (
+                {webinar.price && webinar.price > 0 ? (
                   <button
                     onClick={() => setPurchaseOpen(true)}
                     className="px-5 py-2 bg-orange-500 text-white rounded-full"
                   >
-                    ₹{w.price} | Buy Now
+                    ₹{webinar.price} | Buy Now
                   </button>
                 ) : (
                   <button
@@ -130,26 +133,19 @@ export default function WebinarDetailPage() {
                     Register Free
                   </button>
                 )}
-
-                <button
-                  onClick={() => router.push("/dashboard/webinar")}
-                  className="px-5 py-2 border rounded-full"
-                >
-                  Back to List
-                </button>
               </div>
             </div>
           </div>
 
           {/* Tabs */}
           <div className="bg-white rounded-2xl shadow p-4">
-            <div className="flex gap-3 border-b pb-3 overflow-x-auto">
-              {["overview", "faculty", "faq", "feedback", "quiz"].map((t) => (
+            <div className="flex gap-3 border-b pb-3">
+              {(
+                ["overview", "faculty", "faq", "feedback", "quiz"] as TabType[]
+              ).map((t) => (
                 <button
                   key={t}
-                  onClick={() =>
-                    setTab(t as "overview" | "faculty" | "faq" | "feedback" | "quiz")
-                  }
+                  onClick={() => setTab(t)}
                   className={`capitalize px-3 py-1.5 rounded-md text-sm ${
                     tab === t
                       ? "bg-[#E8F3FF] text-[#1F5C9E] font-semibold"
@@ -164,13 +160,14 @@ export default function WebinarDetailPage() {
             <div className="mt-6">
               {tab === "overview" && (
                 <Overview
-                  description={overview?.description ?? ""}
+                  description={overview?.description}
                   comments={comments}
                   commentText={commentText}
                   setCommentText={setCommentText}
                   onAddComment={() => {}}
                 />
               )}
+
               {tab === "faculty" && <Faculty faculty={faculty} />}
               {tab === "faq" && <FAQ faq={faq} />}
               {tab === "feedback" && (
@@ -178,13 +175,15 @@ export default function WebinarDetailPage() {
               )}
               {tab === "quiz" && (
                 <Quiz
-                  title={w.title}
+                  title={webinar.title}
                   subtitle="Subsection"
                   durationMinutes={`${durationMinutes} Minutes`}
-                  questionsCount={questionsCount || 10}
+                  questionsCount={questionsCount}
                   perQuestionSeconds={perQuestionSeconds}
                   onStart={() =>
-                    router.push(`/dashboard/webinar/${w.id}/quiz-runner`)
+                    router.push(
+                      `/dashboard/webinar/${webinar.id}/quiz-runner`
+                    )
                   }
                 />
               )}
@@ -192,15 +191,15 @@ export default function WebinarDetailPage() {
           </div>
         </div>
 
-        {/* RIGHT – SPONSOR */}
-        <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center sticky top-6 h-fit">
-          <p className="text-xs text-gray-500 mb-4 text-center">
+        {/* RIGHT (Sponsor) */}
+        <div className="bg-white rounded-2xl shadow p-6 sticky top-6 h-fit flex flex-col items-center">
+          <p className="text-xs text-gray-500 mb-4">
             EDUCATIONAL GRANT BY
           </p>
           <Image
             src="/sun_pharma.png"
             alt="Sun Pharma"
-            width={60}
+            width={70}
             height={50}
             className="object-contain"
           />
@@ -214,7 +213,7 @@ export default function WebinarDetailPage() {
         title="Register for Webinar"
       >
         <RegisterForm
-          webinarId={String(w.id)}
+          webinarId={String(webinar.id)}
           onDone={() => setRegisterOpen(false)}
         />
       </Modal>
@@ -225,8 +224,8 @@ export default function WebinarDetailPage() {
         title="Purchase Ticket"
       >
         <PurchaseForm
-          webinarId={String(w.id)}
-          price={w.price ?? 0}
+          webinarId={String(webinar.id)}
+          price={webinar.price ?? 0}
           onDone={() => setPurchaseOpen(false)}
         />
       </Modal>
