@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { useRouter, useParams } from "next/navigation";
+// import Image from "next/image";
 
 import { webinars } from "@/app/data/webinar";
 import { quizByWebinar, quizMetaByWebinar } from "@/app/data/webinar/quiz";
@@ -20,8 +20,9 @@ function formatMMSS(sec: number) {
   return `${m}:${s}`;
 }
 
-export default function QuizRunnerClient({ id }: { id: string }) {
-  const webinarId = Number(id);
+export default function QuizRunnerClient() {
+  const params = useParams();
+  const webinarId = Number(params.id);
   const router = useRouter();
 
   const webinar = webinars.find((w) => w.id === webinarId);
@@ -78,7 +79,6 @@ export default function QuizRunnerClient({ id }: { id: string }) {
 
   function handleSubmit() {
     if (timerRef.current) clearInterval(timerRef.current);
-
     nextQuestion({
       qid: q.id,
       selectedIndex: selected,
@@ -88,7 +88,6 @@ export default function QuizRunnerClient({ id }: { id: string }) {
 
   function handleSkip() {
     if (timerRef.current) clearInterval(timerRef.current);
-
     nextQuestion({
       qid: q.id,
       selectedIndex: null,
@@ -103,162 +102,69 @@ export default function QuizRunnerClient({ id }: { id: string }) {
     ).length;
 
     return (
-      <div className="p-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
-
-          {/* LEFT */}
-          <div>
-            <div className="flex items-center justify-center">
-              <div className="bg-white rounded-2xl shadow p-12 w-full max-w-md text-center">
-                <div className="mx-auto w-28 h-28 rounded-full bg-orange-500 text-white flex flex-col items-center justify-center">
-                  <div className="text-2xl font-bold">
-                    {String(correctCount).padStart(2, "0")} /{" "}
-                    {String(questions.length).padStart(2, "0")}
-                  </div>
-                  <div className="text-sm">Your Score</div>
-                </div>
-
-                <h2 className="mt-6 text-xl font-semibold">
-                  Congratulations!
-                </h2>
-
-                <p className="mt-2 text-gray-600">
-                  You have successfully completed the quiz.
-                </p>
-
-                <button
-                  onClick={() =>
-                    router.push(`/dashboard/webinar/${webinar.id}`)
-                  }
-                  className="mt-6 px-6 py-2 bg-[#1F5C9E] text-white rounded-md"
-                >
-                  BACK TO HOME
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT */}
-          <div className="bg-white rounded-2xl shadow p-6 sticky top-6 h-fit">
-            <p className="text-xs text-gray-500 mb-3 text-center">
-              EDUCATIONAL GRANT BY
-            </p>
-            <Image
-              src="/sun_pharma.png"
-              alt="Sun Pharma"
-              width={60}
-              height={60}
-              className="object-contain mx-auto"
-            />
-          </div>
-        </div>
+      <div className="p-8 max-w-xl mx-auto text-center bg-white rounded-2xl shadow">
+        <h2 className="text-2xl font-bold">
+          {correctCount} / {questions.length}
+        </h2>
+        <p className="mt-2 text-gray-600">
+          You have successfully completed the quiz
+        </p>
+        <button
+          onClick={() => router.push(`/dashboard/webinar/${webinar.id}`)}
+          className="mt-6 px-6 py-2 bg-blue-700 text-white rounded"
+        >
+          Back to Webinar
+        </button>
       </div>
     );
   }
 
-  /* ---------- timer ring ---------- */
-  const ringSize = 120;
-  const stroke = 10;
-  const radius = (ringSize - stroke) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const percent = Math.max(0, timeLeft / perQuestionSeconds);
-  const dashoffset = circumference * (1 - percent);
-
   /* ================= QUIZ UI ================= */
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
+    <div className="p-8 max-w-5xl mx-auto">
+      <h1 className="text-xl font-semibold mb-2">
+        Question {index + 1} / {questions.length}
+      </h1>
 
-        {/* LEFT */}
-        <div>
-          <h1 className="text-2xl font-semibold text-center mb-6">
-            Quiz
-          </h1>
+      {/* TIMER DISPLAY */}
+      <div className="mb-4 text-right font-semibold text-green-700">
+        Time Left: {formatMMSS(timeLeft)}
+      </div>
 
-          {/* TIMER */}
-          <div className="flex justify-center mb-6">
-            <div className="bg-white rounded-xl shadow p-6 w-60 text-center">
-              <div className="relative mx-auto w-28 h-28">
-                <svg width={ringSize} height={ringSize}>
-                  <circle
-                    cx={ringSize / 2}
-                    cy={ringSize / 2}
-                    r={radius}
-                    stroke="#D1FAE5"
-                    strokeWidth={stroke}
-                    fill="none"
-                  />
-                  <circle
-                    cx={ringSize / 2}
-                    cy={ringSize / 2}
-                    r={radius}
-                    stroke="#22C55E"
-                    strokeWidth={stroke}
-                    fill="none"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={dashoffset}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center text-lg font-bold text-green-700">
-                  {formatMMSS(timeLeft)}
-                </div>
-              </div>
-            </div>
-          </div>
+      <p className="mb-6">{q.q}</p>
 
-          <h2 className="text-lg font-semibold mb-6">
-            {index + 1}. {q.q}
-          </h2>
+      <div className="space-y-3">
+        {q.options.map((opt, i) => (
+          <button
+            key={i}
+            onClick={() => setSelected(i)}
+            className={`w-full p-4 border rounded transition ${
+              selected === i
+                ? "bg-blue-50 border-blue-500"
+                : "hover:bg-gray-50"
+            }`}
+          >
+            {opt}
+          </button>
+        ))}
+      </div>
 
-          <div className="space-y-4">
-            {q.options.map((opt, i) => (
-              <button
-                key={i}
-                onClick={() => setSelected(i)}
-                className={`w-full flex items-center gap-4 p-4 border rounded-md ${
-                  selected === i
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-300"
-                }`}
-              >
-                <div className="w-10 h-10 bg-gray-300 rounded flex items-center justify-center font-semibold">
-                  {String.fromCharCode(65 + i)}
-                </div>
-                <span>{opt}</span>
-              </button>
-            ))}
-          </div>
+      {/* ACTION BUTTONS */}
+      <div className="mt-6 flex gap-4">
+        <button
+          onClick={handleSubmit}
+          disabled={selected === null}
+          className="px-6 py-2 bg-blue-700 text-white rounded disabled:opacity-50"
+        >
+          Submit
+        </button>
 
-          <div className="mt-8 flex justify-center gap-4">
-            <button
-              onClick={() => selected !== null && handleSubmit()}
-              className="px-6 py-2 bg-blue-700 text-white rounded-md"
-            >
-              SUBMIT ANSWER
-            </button>
-            <button
-              onClick={handleSkip}
-              className="px-6 py-2 border rounded-md"
-            >
-              SKIP
-            </button>
-          </div>
-        </div>
-
-        {/* RIGHT */}
-        <div className="bg-white rounded-2xl shadow p-6 sticky top-6 h-fit">
-          <p className="text-xs text-gray-500 mb-3 text-center">
-            EDUCATIONAL GRANT BY
-          </p>
-          <Image
-            src="/sun_pharma.png"
-            alt="Sun Pharma"
-            width={60}
-            height={60}
-            className="object-contain mx-auto"
-          />
-        </div>
+        <button
+          onClick={handleSkip}
+          className="px-6 py-2 border rounded"
+        >
+          Skip
+        </button>
       </div>
     </div>
   );
