@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import CourseCard from "./CourseCard";
+import CourseCard from "./ElearningCourseCard";
 import RegisterModal from "./RegisterModal";
 import { ChevronDown } from "lucide-react";
 import { ELEARNING_COURSES, type ElearningCourse } from "@/app/data/elearning/elearning";
@@ -13,7 +12,6 @@ export default function ElearningPage() {
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<Sort>("newest");
   const [sortOpen, setSortOpen] = useState(false);
-  const router = useRouter();
   const sortRef = useRef<HTMLDivElement | null>(null);
 
   // modal state
@@ -129,10 +127,7 @@ export default function ElearningPage() {
           <CourseCard
             key={w.id}
             course={w}
-            // primary button opens modal
-            onPrimaryAction={() => openModal(w)}
-            // optional navigate handler (not required because image/title link)
-            onNavigate={() => router.push(`/elearning/${w.id}`)}
+            onRegister={() => openModal(w)}
           />
         ))}
       </div>
