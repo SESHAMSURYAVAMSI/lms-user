@@ -30,7 +30,7 @@ export default function LiveConferencePage() {
       </div>
 
       {/* Grid – SAME AS WEBINARS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filtered.map((conf) => (
           <ConferenceCard key={conf.id} conference={conf} />
         ))}

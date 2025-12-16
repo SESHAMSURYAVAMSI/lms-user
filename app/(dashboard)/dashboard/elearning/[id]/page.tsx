@@ -1,49 +1,270 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { ELEARNING_COURSES } from "@/app/data/elearning/elearning";
+import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import {
+  CalendarDays,
+  Clock,
+  CheckCircle2,
+  ChevronDown,
+  Eye,
+} from "lucide-react";
+
+import { ELEARNING_COURSES } from "@/app/data/elearning/elearning";
+import { COURSE_DETAIL } from "@/app/data/elearning/detail";
+import PreviewVideoModal from "@/app/components/dashboard/elearning/PreviewVideoModal";
+
+/* ---------- helpers ---------- */
+function formatTotalTime(totalMinutes: number) {
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return `${h}h ${m}m`;
+}
 
 export default function ElearningDetailPage() {
-  const params = useParams<{ id: string }>();
+  const params = useParams();
+  const router = useRouter();
   const id = Number(params.id);
 
   const course = ELEARNING_COURSES.find((c) => c.id === id);
 
-  if (!course) {
-    return (
-      <div className="p-10 text-center text-gray-600">
-        Course not found
-      </div>
-    );
-  }
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [showMore, setShowMore] = useState(false);
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewLecture, setPreviewLecture] = useState<{
+    title: string;
+    videoUrl: string;
+  } | null>(null);
+
+  if (!course) return <div className="p-8">Course not found</div>;
+
+  /* ---------- totals ---------- */
+  const sections = COURSE_DETAIL.content.length;
+  const totalLectures = COURSE_DETAIL.content.reduce(
+    (s, w) => s + w.lectures,
+    0
+  );
+  const totalMinutes = COURSE_DETAIL.content.reduce(
+    (s, w) => s + w.durationMinutes,
+    0
+  );
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
-      {/* Course Image */}
-      <div className="relative w-full h-[320px] rounded-2xl overflow-hidden">
-        <Image
-          src={course.image}
-          alt={course.title}
-          fill
-          className="object-cover"
-        />
-      </div>
+    <div className="max-w-[1320px] mx-auto px-6 py-6 space-y-8">
 
-      {/* Course Info */}
-      <div className="bg-white rounded-2xl shadow p-6 space-y-4">
-        <h1 className="text-2xl font-semibold text-[#252641]">
+      {/* ================= BREADCRUMB ================= */}
+      <div className="flex items-center gap-2 text-sm">
+        <button
+          onClick={() => router.push("/dashboard/elearning")}
+          className="text-gray-500 hover:text-[#1F5C9E]"
+        >
+          E-learning Courses
+        </button>
+        <span className="text-gray-400">{">"}</span>
+        <span className="text-[#1F5C9E] font-medium">
           {course.title}
-        </h1>
-
-        <p className="text-gray-600">
-          {course.type} • {course.mode}
-        </p>
-
-        <p className="text-sm text-gray-500">
-          {course.dateRange} | {course.time}
-        </p>
+        </span>
       </div>
+
+      {/* ================= LAYOUT ================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6">
+
+        {/* ================= LEFT ================= */}
+        <div className="space-y-6">
+
+          {/* IMAGE */}
+          <div className="bg-white rounded-2xl shadow overflow-hidden">
+            <Image
+              src={course.image}
+              alt={course.title}
+              width={1200}
+              height={500}
+              className="w-full h-[360px] object-cover"
+            />
+          </div>
+
+          {/* META */}
+          <div className="bg-white rounded-2xl shadow p-4 space-y-2">
+            <div className="flex justify-between text-sm text-gray-700">
+              <div className="flex items-center gap-2">
+                <CalendarDays size={14} />
+                {course.dateRange}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-green-500 border border-black" />
+                <span className="text-green-600 font-medium">
+                  {course.mode}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-sm text-gray-700">
+              <Clock size={14} />
+              {course.time}
+            </div>
+
+            <h1 className="text-lg font-semibold text-[#252641]">
+              {course.title}
+            </h1>
+          </div>
+
+          {/* WHAT YOU’LL LEARN */}
+          <section className="bg-white rounded-2xl shadow p-6">
+            <h2 className="text-lg font-semibold mb-4">
+              What you’ll learn?
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {COURSE_DETAIL.learn.map((item, i) => (
+                <div key={i} className="flex gap-2 text-sm">
+                  <CheckCircle2 size={16} className="text-green-600 mt-0.5" />
+                  {item}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* COURSE INCLUDES */}
+          <section className="bg-white rounded-2xl shadow p-6">
+            <h2 className="text-lg font-semibold mb-4">
+              This course includes
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+              {COURSE_DETAIL.includes.map((item, i) => (
+                <div key={i}>✔ {item}</div>
+              ))}
+            </div>
+          </section>
+
+          {/* COURSE CONTENT */}
+          <section className="bg-white rounded-2xl shadow p-6">
+            <h2 className="text-lg font-semibold mb-1">
+              Course content
+            </h2>
+
+            <p className="text-sm text-gray-600 mb-4">
+              {sections} sections • {totalLectures} lectures •{" "}
+              {formatTotalTime(totalMinutes)} total length
+            </p>
+
+            <div className="border rounded-xl divide-y">
+              {COURSE_DETAIL.content.map((week, i) => {
+                const open = openIndex === i;
+
+                return (
+                  <div key={i}>
+                    <button
+                      onClick={() =>
+                        setOpenIndex(open ? null : i)
+                      }
+                      className={`w-full flex justify-between px-4 py-3 text-sm font-medium ${
+                        open
+                          ? "bg-[#1F5C9E] text-white"
+                          : "bg-white hover:bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex gap-2 items-center">
+                        <ChevronDown
+                          size={16}
+                          className={`transition ${
+                            open ? "rotate-180" : ""
+                          }`}
+                        />
+                        {week.week}
+                      </div>
+
+                      <span>
+                        {week.lectures} lectures • {week.durationMinutes} min
+                      </span>
+                    </button>
+
+                    {open &&
+                      week.items.map((lec, idx) => (
+                        <div
+                          key={idx}
+                          className="flex justify-between px-6 py-3 text-sm border-t"
+                        >
+                          <span>{lec.title}</span>
+
+                          <div className="flex items-center gap-6">
+                            {lec.preview && lec.videoUrl && (
+                              <button
+                                onClick={() => {
+                                  setPreviewLecture({
+                                    title: lec.title,
+                                    videoUrl: lec.videoUrl!,
+                                  });
+                                  setPreviewOpen(true);
+                                }}
+                                className="flex items-center gap-1 text-green-600 text-xs font-medium"
+                              >
+                                <Eye size={14} /> Preview
+                              </button>
+                            )}
+
+                            <span className="text-xs text-gray-500">
+                              {lec.duration} min
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* COURSE DESCRIPTION */}
+          <section className="bg-white rounded-2xl shadow p-6">
+            <h2 className="text-lg font-semibold mb-3">
+              Course Description
+            </h2>
+
+            {(showMore
+              ? COURSE_DETAIL.description
+              : COURSE_DETAIL.description.slice(0, 2)
+            ).map((para, i) => (
+              <p key={i} className="text-sm text-gray-700 mb-4">
+                {para}
+              </p>
+            ))}
+
+            <button
+              onClick={() => setShowMore(!showMore)}
+              className="text-sm font-medium text-[#1F5C9E]"
+            >
+              {showMore ? "Show less" : "Show more"}
+            </button>
+          </section>
+        </div>
+
+        {/* ================= RIGHT ================= */}
+        <div className="bg-white rounded-2xl shadow p-6 h-fit sticky top-6">
+          <p className="text-xs text-gray-500 mb-4 text-center">
+            EDUCATIONAL GRANT BY
+          </p>
+          <Image
+            src="/sun_pharma.png"
+            alt="Sun Pharma"
+            width={120}
+            height={80}
+            className="mx-auto object-contain"
+          />
+        </div>
+      </div>
+
+      {/* PREVIEW MODAL */}
+      {previewLecture && (
+        <PreviewVideoModal
+          open={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          title={previewLecture.title}
+          videoUrl={previewLecture.videoUrl}
+        />
+      )}
     </div>
   );
 }
