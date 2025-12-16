@@ -6,14 +6,13 @@ import {
   Search,
   CalendarDays,
   Clock,
-  MapPin,
   Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getMyLearningWebinars } from "@/lib/myLearningStorage";
 import { useRouter } from "next/navigation";
 
-/* ✅ STRONG TYPE (FIX FOR `any`) */
+/* ✅ STRONG TYPE */
 type MyLearningWebinar = {
   id: number | string;
   title: string;
@@ -91,15 +90,16 @@ export default function MyLearningPage() {
                   <div className="flex items-center gap-2">
                     <Clock size={14} />
                     <span>{course.time}</span>
-                  </div>
-                )}
 
-                {course.mode && (
-                  <div className="flex items-center gap-2">
-                    <MapPin size={14} />
-                    <span className="font-medium text-green-600">
-                      {course.mode}
-                    </span>
+                    {/* GREEN ROUND DOT */}
+                    {course.mode && (
+                      <>
+                        <span className="ml-2 w-2.5 h-2.5 rounded-full bg-green-500 border border-black inline-block" />
+                        <span className="font-medium text-green-600">
+                          {course.mode}
+                        </span>
+                      </>
+                    )}
                   </div>
                 )}
 

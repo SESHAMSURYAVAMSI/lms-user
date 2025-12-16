@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { CalendarDays, Clock, MapPin, ChevronDown } from "lucide-react";
+import { CalendarDays, Clock, ChevronDown } from "lucide-react";
 import { webinars as allWebinars } from "@/app/data/webinar";
 
 const TABS = ["live", "upcoming", "past"] as const;
@@ -145,31 +145,34 @@ export default function WebinarList() {
                   <CalendarDays size={14} />
                   {w.startDate} - {w.endDate}
                 </div>
+
+                {/* TIME + GREEN DOT */}
                 <div className="flex items-center gap-2">
                   <Clock size={14} />
-                  {w.time}
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin size={14} />
+                  <span>{w.time}</span>
+
+                  {/* GREEN ROUND DOT */}
+                  <span className="ml-5 w-2.5 h-2.5 rounded-full bg-green-500 border border-black inline-block" />
+
                   <span className="text-green-600 font-medium">
                     {w.mode}
                   </span>
                 </div>
               </div>
 
-              {/* Title (fixed spacing) */}
+              {/* Title */}
               <h3 className="mt-4 text-base font-semibold text-[#252641] line-clamp-2 min-h-[3rem]">
                 {w.title}
               </h3>
 
-              {/* BUTTON FIXED AT BOTTOM */}
+              {/* Button */}
               <div className="mt-auto pt-4 flex justify-center">
                 {w.price && w.price > 0 ? (
                   <button
                     onClick={() =>
                       router.push(`/dashboard/webinar/${w.id}`)
                     }
-                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-sm font-semibold w-full text-center"
+                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-sm font-semibold w-full"
                   >
                     ₹{w.price} | Buy Now
                   </button>
@@ -178,7 +181,7 @@ export default function WebinarList() {
                     onClick={() =>
                       router.push(`/dashboard/webinar/${w.id}`)
                     }
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full text-sm font-semibold w-full text-center"
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full text-sm font-semibold w-full"
                   >
                     Register Free
                   </button>

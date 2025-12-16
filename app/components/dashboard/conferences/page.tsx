@@ -1,107 +1,140 @@
-'use client';
-//This file is a client component in Next.js, which allows us to use hooks like useState and useEffect. 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+// "use client";
 
-export default function ComingSoonPage() {
-  const calculateTimeLeft = () => {
-    const target = new Date("2025-08-01T00:00:00");
-    const now = new Date();
-    const difference = +target - +now;
-    let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+// import Image from "next/image";
+// import { useRouter } from "next/navigation";
+// import { CalendarDays, Clock, MapPin } from "lucide-react";
+// import type { LiveConference } from "@/app/data/liveConference";
 
-    if (difference > 0) {
-      timeLeft = {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60),
-      };
-    }
+// export function ConferenceCard({
+//   conference,
+// }: {
+//   conference: LiveConference;
+// }) {
+//   const router = useRouter();
 
-    return timeLeft;
-  };
+//   return (
+//     <article className="flex flex-col bg-white rounded-2xl p-4 shadow hover:shadow-lg transition">
+//       {/* Image */}
+//       <div
+//         className="rounded-xl overflow-hidden cursor-pointer"
+//         onClick={() =>
+//           router.push(`/dashboard/live-conference/${conference.id}`)
+//         }
+//       >
+//         <Image
+//           src={conference.image}
+//           alt={conference.title}
+//           width={480}
+//           height={260}
+//           className="object-cover w-full h-44"
+//         />
+//       </div>
 
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [isClient, setIsClient] = useState(false);
+//       <div className="mt-3 flex flex-col flex-grow">
+//         {/* Meta */}
+//         <div className="text-sm flex flex-col gap-2">
+//           <div className="flex items-center gap-2">
+//             <CalendarDays size={14} />
+//             {conference.dateRange}
+//           </div>
+//           <div className="flex items-center gap-2">
+//             <Clock size={14} />
+//             {conference.time}
+//           </div>
+//           <div className="flex items-center gap-2">
+//             <MapPin size={14} />
+//             <span className="text-green-600 font-medium">
+//               {conference.mode}
+//             </span>
+//           </div>
+//         </div>
 
-  useEffect(() => {
-    setIsClient(true); 
-    setTimeLeft(calculateTimeLeft());
+//         {/* Title */}
+//         <h3
+//           className="mt-4 text-base font-semibold text-[#252641] cursor-pointer"
+//           onClick={() =>
+//             router.push(`/dashboard/live-conference/${conference.id}`)
+//           }
+//         >
+//           {conference.title}
+//         </h3>
 
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
+//         {/* Button → SAME FLOW AS WEBINAR */}
+//         <div className="mt-auto pt-4 flex justify-center">
+//           <button
+//             onClick={() =>
+//               router.push(`/dashboard/live-conference/${conference.id}`)
+//             }
+//             className={`px-4 py-2 rounded-full text-sm font-semibold w-full ${
+//               conference.price > 0
+//                 ? "bg-orange-500 hover:bg-orange-600 text-white"
+//                 : "bg-green-600 hover:bg-green-700 text-white"
+//             }`}
+//           >
+//             {conference.price > 0
+//               ? `₹${conference.price} | Buy Now`
+//               : "Register Free"}
+//           </button>
+//         </div>
+//       </div>
+//     </article>
+//   );
+// }
 
-    return () => clearInterval(timer);
-  }, []);
+// export default ConferenceCard;
+
+"use client";
+
+import { useMemo, useState } from "react";
+import ConferenceCard from "@/app/components/dashboard/conferences/ConferenceCard";
+import { LIVE_CONFERENCES } from "@/app/data/liveConference";
+
+export default function LiveConferencePage() {
+  const [q, setQ] = useState("");
+
+  const conferences = useMemo(() => {
+    const query = q.trim().toLowerCase();
+    return query
+      ? LIVE_CONFERENCES.filter((c) =>
+          c.title.toLowerCase().includes(query)
+        )
+      : LIVE_CONFERENCES;
+  }, [q]);
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="text-center max-w-md w-full">
-        <motion.h1
-          className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          Divina is currently working hard on this page!
-        </motion.h1>
+    <div className="p-6">
+      {/* HEADER */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-[#252641]">
+          Live Conference
+        </h1>
 
-        <motion.p
-          className="text-gray-500 mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          Website currently under maintenance
-        </motion.p>
-
-        <motion.div
-          className="flex justify-center mb-6"
-          initial={{ scale: 0.95 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Image
-            src="/images/comming-soon.png"
-            alt="Maintenance"
-            width={300}
-            height={300}
-            className="w-full max-w-xs"
-            priority
+        {/* SEARCH ONLY (as per image) */}
+        <div className="mt-3">
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search"
+            className="w-full md:w-80 px-4 py-2 rounded-lg border focus:ring-2 focus:ring-orange-500"
           />
-        </motion.div>
-
-        {isClient && (
-          <div className="flex justify-center gap-4 text-lg font-semibold text-gray-800 mb-6">
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.days}</div>
-              <div className="text-sm text-gray-500">Days</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.hours}</div>
-              <div className="text-sm text-gray-500">Hours</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.minutes}</div>
-              <div className="text-sm text-gray-500">Minutes</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.seconds}</div>
-              <div className="text-sm text-gray-500">Seconds</div>
-            </div>
-          </div>
-        )}
-
-        <Link
-          href="https://saascraft.studio/"
-          className="inline-block bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition"
-        >
-         Owned by SaaScraft Studio (India) Pvt. Ltd.
-        </Link>
+        </div>
       </div>
-    </main>
+
+      {/* GRID */}
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"> */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {conferences.map((conf) => (
+          <ConferenceCard key={conf.id} conference={conf} />
+        ))}
+      </div>
+
+      {/* EMPTY STATE */}
+      {conferences.length === 0 && (
+        <p className="text-gray-500 text-center mt-10">
+          No conferences found.
+        </p>
+      )}
+    </div>
   );
 }
+

@@ -21,7 +21,7 @@ import FAQ from "@/app/components/dashboard/webinar/tabs/FAQ";
 import Feedback from "@/app/components/dashboard/webinar/tabs/Feedback";
 import Quiz from "@/app/components/dashboard/webinar/tabs/Quiz";
 
-import { CalendarDays, Clock, MapPin } from "lucide-react";
+import { CalendarDays, Clock } from "lucide-react";
 
 /* ================= TYPES ================= */
 type TabType = "overview" | "faculty" | "faq" | "feedback" | "quiz";
@@ -98,18 +98,30 @@ export default function WebinarDetailPage() {
                 {webinar.title}
               </h1>
 
-              <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-700">
+              {/* ===== META ===== */}
+              <div className="mt-3 text-sm text-gray-700 space-y-2">
+                {/* DATE */}
                 <div className="flex items-center gap-2">
                   <CalendarDays size={16} />
-                  {webinar.startDate} - {webinar.endDate}
+                  <span>
+                    {webinar.startDate} – {webinar.endDate}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock size={16} />
-                  {webinar.time}
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin size={16} />
-                  {webinar.mode}
+
+                {/* TIME + MODE (DOT WITH MODE ON RIGHT) */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock size={16} />
+                    <span>{webinar.time}</span>
+                  </div>
+
+                  {/* MODE WITH GREEN DOT */}
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-500 border border-black inline-block" />
+                    <span className="font-medium text-green-600">
+                      {webinar.mode}
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -117,6 +129,7 @@ export default function WebinarDetailPage() {
                 {overview?.description}
               </p>
 
+              {/* ACTION BUTTON */}
               <div className="mt-6 flex gap-4">
                 {webinar.price && webinar.price > 0 ? (
                   <button
@@ -167,7 +180,6 @@ export default function WebinarDetailPage() {
                   onAddComment={() => {}}
                 />
               )}
-
               {tab === "faculty" && <Faculty faculty={faculty} />}
               {tab === "faq" && <FAQ faq={faq} />}
               {tab === "feedback" && (
