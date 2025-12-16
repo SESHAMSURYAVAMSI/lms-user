@@ -7,20 +7,86 @@ import Image from "next/image";
 import { webinars } from "@/app/data/webinar";
 import { quizByWebinar, quizMetaByWebinar } from "@/app/data/webinar/quiz";
 
-/* ---------- types ---------- */
+/* ================= TYPES ================= */
 type AnswerRecord = {
-  qid: string | number;
+  qid: number | string;
   selectedIndex: number | null;
   correctIndex: number;
 };
 
-/* ---------- helpers ---------- */
+/* ================= HELPERS ================= */
 function formatMMSS(sec: number) {
   const m = Math.floor(sec / 60).toString().padStart(2, "0");
   const s = Math.floor(sec % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 }
 
+/* ================= TIMER CIRCLE (FIXED) ================= */
+function TimerCircle({
+  timeLeft,
+  total,
+}: {
+  timeLeft: number;
+  total: number;
+}) {
+  const radius = 55;
+  const stroke = 5;
+  const normalizedRadius = radius - stroke * 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+  const progress = timeLeft / total;
+
+  const color =
+    progress > 0.5
+      ? "#16a34a"
+      : progress > 0.25
+      ? "#f59e0b"
+      : "#dc2626";
+
+  return (
+    <div className="relative w-28 h-28 flex items-center justify-center">
+      <svg
+        width={radius * 2}
+        height={radius * 2}
+        className="absolute"
+      >
+        <circle
+          stroke="#e5e7eb"
+          fill="transparent"
+          strokeWidth={stroke}
+          r={normalizedRadius}
+          cx={radius}
+          cy={radius}
+        />
+        <circle
+          stroke={color}
+          fill="transparent"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${circumference} ${circumference}`}
+          strokeDashoffset={
+            circumference - progress * circumference
+          }
+          r={normalizedRadius}
+          cx={radius}
+          cy={radius}
+          style={{ transition: "stroke-dashoffset 1s linear" }}
+        />
+      </svg>
+
+      {/* CENTERED TEXT */}
+      <div className="flex flex-col items-center justify-center text-center">
+        <span className="text-lg font-bold" style={{ color }}>
+          {formatMMSS(timeLeft)}
+        </span>
+        <span className="text-[11px] text-gray-500 font-medium mt-1">
+          TIMER
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ================= MAIN ================= */
 export default function QuizRunnerClient() {
   const params = useParams();
   const router = useRouter();
@@ -40,7 +106,7 @@ export default function QuizRunnerClient() {
 
   const timerRef = useRef<number | null>(null);
 
-  /* ---------- timer ---------- */
+  /* ================= TIMER ================= */
   useEffect(() => {
     if (finished) return;
 
@@ -56,18 +122,11 @@ export default function QuizRunnerClient() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [index, perQuestionSeconds, finished]);
+  }, [index, finished, perQuestionSeconds]);
 
   useEffect(() => {
-    if (timeLeft <= 0 && !finished) handleSubmit();
+    if (timeLeft <= 0 && !finished) submitAnswer();
   }, [timeLeft, finished]);
-
-  useEffect(() => {
-    if (finished && answers.length > 0) {
-      // Save answers or navigate to results page
-      console.log("Quiz completed with answers:", answers);
-    }
-  }, [finished, answers]);
 
   if (!webinar || questions.length === 0) {
     return <div className="p-8">Quiz not available</div>;
@@ -83,11 +142,11 @@ export default function QuizRunnerClient() {
       if (timerRef.current) clearInterval(timerRef.current);
       return;
     }
+
     setIndex((i) => i + 1);
   }
 
-  function handleSubmit() {
-    if (timerRef.current) clearInterval(timerRef.current);
+  function submitAnswer() {
     nextQuestion({
       qid: q.id,
       selectedIndex: selected,
@@ -95,8 +154,7 @@ export default function QuizRunnerClient() {
     });
   }
 
-  function handleSkip() {
-    if (timerRef.current) clearInterval(timerRef.current);
+  function skipQuestion() {
     nextQuestion({
       qid: q.id,
       selectedIndex: null,
@@ -104,98 +162,98 @@ export default function QuizRunnerClient() {
     });
   }
 
-  /* ---------- timer ring ---------- */
-  const ringSize = 120;
-  const stroke = 10;
-  const radius = (ringSize - stroke) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const percent = Math.max(0, timeLeft / perQuestionSeconds);
-  const dashoffset = circumference * (1 - percent);
+  /* ================= RESULT PAGE ================= */
+  if (finished) {
+    const score = answers.filter(
+      (a) => a.selectedIndex === a.correctIndex
+    ).length;
 
-  const ringColor =
-    percent <= 0.2 ? "#EF4444" : percent <= 0.5 ? "#F59E0B" : "#22C55E";
+    return (
+      <div className="p-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
+          <div>
+            <div className="text-sm text-orange-600 mb-6">
+              Webinar &gt; {webinar.title} &gt; QUIZ
+            </div>
 
-  /* ================= QUIZ UI ================= */
-  return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
+            <h1 className="text-center text-xl font-semibold mb-10">
+              Quiz – 1 Result
+            </h1>
 
-        {/* LEFT */}
-        <div>
-
-          {/* ✅ BREADCRUMB */}
-          <div className="flex items-center gap-2 text-sm mb-4">
-            <button
-              onClick={() => router.push("/dashboard/webinar")}
-              className="text-orange-600 hover:underline font-medium"
-            >
-              Webinar
-            </button>
-            <span className="text-gray-400">&gt;</span>
-
-            <button
-              onClick={() =>
-                router.push(`/dashboard/webinar/${webinar.id}`)
-              }
-              className="text-orange-600 hover:underline font-medium truncate max-w-[320px]"
-              title={webinar.title}
-            >
-              {webinar.title}
-            </button>
-
-            <span className="text-gray-400">&gt;</span>
-            <span className="text-gray-500 font-semibold">Quiz</span>
-          </div>
-
-          <h1 className="text-2xl font-semibold mb-4 text-center">
-            Quiz
-          </h1>
-
-          {/* CIRCULAR TIMER */}
-          <div className="flex justify-center mb-6">
-            <div className="bg-white rounded-xl shadow p-6 w-60 text-center">
-              <div className="relative mx-auto w-[120px] h-[120px]">
-                <svg width={ringSize} height={ringSize}>
-                  <circle
-                    cx={ringSize / 2}
-                    cy={ringSize / 2}
-                    r={radius}
-                    stroke="#E5E7EB"
-                    strokeWidth={stroke}
-                    fill="none"
-                  />
-                  <circle
-                    cx={ringSize / 2}
-                    cy={ringSize / 2}
-                    r={radius}
-                    stroke={ringColor}
-                    strokeWidth={stroke}
-                    fill="none"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={dashoffset}
-                    strokeLinecap="round"
-                    transform={`rotate(-90 ${ringSize / 2} ${ringSize / 2})`}
-                    style={{ transition: "stroke-dashoffset 1s linear" }}
-                  />
-                </svg>
-
-                <div className="absolute inset-0 flex items-center justify-center text-lg font-bold">
-                  {formatMMSS(timeLeft)}
+            <div className="flex justify-center">
+              <div className="bg-white rounded-2xl shadow-xl px-16 py-14 text-center max-w-md w-full">
+                <div className="mx-auto w-28 h-28 rounded-full bg-orange-100 flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-full bg-orange-500 text-white flex flex-col items-center justify-center">
+                    <span className="text-xs">Your Score</span>
+                    <span className="text-xl font-bold">
+                      {String(score).padStart(2, "0")}/
+                      {String(questions.length).padStart(2, "0")}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="text-xs mt-2 text-gray-500 font-medium">
-                TIMER
+                <h2 className="mt-6 text-lg font-semibold">
+                  Congratulation
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Dr. Niteesh ! You Completed Quiz
+                </p>
+
+                <button
+                  onClick={() =>
+                    router.push(`/dashboard/webinar/${webinar.id}`)
+                  }
+                  className="mt-6 px-8 py-2 bg-[#1F5C9E] text-white rounded-md font-semibold"
+                >
+                  BACK TO HOME
+                </button>
               </div>
             </div>
           </div>
 
-          <div className="text-right font-semibold text-blue-700 mb-4">
+          <div className="bg-white rounded-xl shadow p-6 h-fit text-center">
+            <p className="text-xs text-gray-500 mb-2">
+              EDUCATIONAL GRANT BY
+            </p>
+            <Image
+              src="/sun_pharma.png"
+              alt="Sun Pharma"
+              width={70}
+              height={70}
+              className="mx-auto"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ================= QUIZ PAGE ================= */
+  return (
+    <div className="p-8 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
+        <div>
+          <div className="text-sm text-orange-600 mb-4">
+            Webinar &gt; {webinar.title} &gt; QUIZ
+          </div>
+
+          <h1 className="text-center font-semibold mb-4">
+            Quiz 1
+          </h1>
+
+          <div className="bg-white rounded-xl shadow p-4 w-fit mx-auto mb-6">
+            <TimerCircle
+              timeLeft={timeLeft}
+              total={perQuestionSeconds}
+            />
+          </div>
+
+          <div className="text-right text-sm font-semibold text-blue-700 mb-4">
             QUESTIONS : {String(index + 1).padStart(2, "0")} /{" "}
             {String(questions.length).padStart(2, "0")}
           </div>
 
-          <h2 className="text-lg font-semibold mb-6">
+          <h2 className="font-semibold mb-6">
             {index + 1}. {q.q}
           </h2>
 
@@ -210,7 +268,7 @@ export default function QuizRunnerClient() {
                     : "border-gray-300"
                 }`}
               >
-                <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center font-semibold">
+                <div className="w-10 h-10 bg-gray-300 rounded flex items-center justify-center font-semibold">
                   {String.fromCharCode(65 + i)}
                 </div>
                 <span>{opt}</span>
@@ -220,33 +278,31 @@ export default function QuizRunnerClient() {
 
           <div className="mt-8 flex justify-center gap-4">
             <button
-              onClick={handleSubmit}
+              onClick={submitAnswer}
               disabled={selected === null}
-              className="px-6 py-2 bg-blue-700 text-white rounded-md disabled:opacity-50"
+              className="px-8 py-2 bg-blue-700 text-white rounded-md disabled:opacity-50"
             >
               SUBMIT ANSWER
             </button>
-
             <button
-              onClick={handleSkip}
-              className="px-6 py-2 border rounded-md"
+              onClick={skipQuestion}
+              className="px-8 py-2 border border-blue-700 text-blue-700 rounded-md"
             >
               SKIP
             </button>
           </div>
         </div>
 
-        {/* RIGHT */}
-        <div className="bg-white rounded-2xl shadow p-6 h-fit">
-          <p className="text-xs text-gray-500 mb-3 text-center">
+        <div className="bg-white rounded-xl shadow p-6 h-fit text-center">
+          <p className="text-xs text-gray-500 mb-2">
             EDUCATIONAL GRANT BY
           </p>
           <Image
             src="/sun_pharma.png"
             alt="Sun Pharma"
-            width={60}
-            height={60}
-            className="mx-auto object-contain"
+            width={70}
+            height={70}
+            className="mx-auto"
           />
         </div>
       </div>
