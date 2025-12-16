@@ -1,11 +1,11 @@
 import QuizRunnerClient from "./QuizRunnerClient";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params; // ✅ REQUIRED IN NEXT 15
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
 
-  return <QuizRunnerClient id={id} />;
+export default function Page({ params }: PageProps) {
+  return <QuizRunnerClient id={params.id} />;
 }
