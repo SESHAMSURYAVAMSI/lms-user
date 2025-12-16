@@ -7,7 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
-export function ResetPasswordForm() {
+/* ✅ PROPS TYPE */
+type ResetPasswordFormProps = {
+  token: string;
+};
+
+export default function ResetPasswordForm({
+  token,
+}: ResetPasswordFormProps) {
   const router = useRouter();
 
   const [password, setPassword] = useState("");
@@ -38,12 +45,14 @@ export function ResetPasswordForm() {
 
     setLoading(true);
 
+    // 🔐 Token available here for API call later
+    console.log("Reset token:", token);
+
     // FRONTEND-ONLY SIMULATION
     setTimeout(() => {
       setLoading(false);
       setMessage("Password reset successful! You can now log in.");
 
-      // Redirect to login after short delay
       setTimeout(() => {
         router.push("/login");
       }, 2000);
@@ -62,63 +71,48 @@ export function ResetPasswordForm() {
             Reset Password
           </h1>
 
-          {/* New Password */}
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               New Password <span className="text-red-500">*</span>
             </label>
             <Input
-              id="password"
               type="password"
               placeholder="Enter new password"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-white"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading || !!message}
             />
           </div>
 
-          {/* Confirm Password */}
           <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Confirm New Password <span className="text-red-500">*</span>
             </label>
             <Input
-              id="confirmPassword"
               type="password"
               placeholder="Confirm new password"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-white"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={loading || !!message}
             />
           </div>
 
-          {/* Success Message */}
           {message && (
             <p className="text-sm text-green-600 bg-green-50 p-3 rounded-md">
               {message}
             </p>
           )}
 
-          {/* Error Message */}
           {error && (
             <p className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
               {error}
             </p>
           )}
 
-          {/* Submit Button */}
           <Button
             type="submit"
             disabled={loading || !!message}
-            className="w-full font-medium bg-orange-500 hover:bg-[#0d47a1] text-white py-2.5"
+            className="w-full bg-orange-500 hover:bg-[#0d47a1] text-white"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -145,5 +139,3 @@ export function ResetPasswordForm() {
     </div>
   );
 }
-
-export default ResetPasswordForm;

@@ -1,14 +1,13 @@
-"use client"; // <-- Make it a Client Component
+"use client";
 
-import { useParams } from "next/navigation"; // Import the hook
-import { ResetPasswordForm } from "@/app/components/auth/ResetPasswordForm";
-import { Loader2 } from "lucide-react"; // For loading state while params load
+import { useParams } from "next/navigation";
+import ResetPasswordForm  from "@/app/components/auth/ResetPasswordForm";
+import { Loader2 } from "lucide-react";
 
 export default function ResetPasswordPage() {
-  const params = useParams(); // Get params using the hook
-  const token = params.token as string; // Extract the token
+  const params = useParams();
+  const token = params.token as string;
 
-  // Optional: Add a loading state until the token is available
   if (!token) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -19,7 +18,6 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      {/* Pass the token from the hook to the form component */}
       <ResetPasswordForm token={token} />
     </div>
   );
