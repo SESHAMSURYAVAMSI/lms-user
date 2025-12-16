@@ -1,11 +1,11 @@
-import QuizRunnerClient from "@/app/(dashboard)/dashboard/webinar/[id]/quiz-runner/QuizRunnerClient";
+import QuizRunnerClient from "./QuizRunnerClient";
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params; // ✅ REQUIRED IN NEXT 15
 
-export default function Page({ params }: PageProps) {
-  return <QuizRunnerClient id={params.id} />;
+  return <QuizRunnerClient id={id} />;
 }
