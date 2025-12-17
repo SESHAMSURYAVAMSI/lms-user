@@ -8,7 +8,7 @@ export default function Footor() {
       <p>Educational Grant By</p>
       <div className="mt-2 flex justify-center">
         <Image
-          src="/sun_pharma.png"
+          src="/Sun_Pharma.png"
           alt="Sun Pharma"
           width={40}
           height={40}

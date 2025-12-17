@@ -209,10 +209,10 @@ export default function WebinarDetailPage() {
             EDUCATIONAL GRANT BY
           </p>
           <Image
-            src="/sun_pharma.png"
+            src="/Sun_Pharma.png"
             alt="Sun Pharma"
-            width={70}
-            height={50}
+            width={60}
+            height={60}
             className="object-contain"
           />
         </div>

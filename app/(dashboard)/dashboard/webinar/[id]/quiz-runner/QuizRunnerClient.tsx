@@ -216,10 +216,10 @@ export default function QuizRunnerClient() {
               EDUCATIONAL GRANT BY
             </p>
             <Image
-              src="/sun_pharma.png"
+              src="/Sun_Pharma.png"
               alt="Sun Pharma"
-              width={70}
-              height={70}
+              width={60}
+              height={60}
               className="mx-auto"
             />
           </div>
@@ -298,10 +298,10 @@ export default function QuizRunnerClient() {
             EDUCATIONAL GRANT BY
           </p>
           <Image
-            src="/sun_pharma.png"
+            src="/Sun_Pharma.png"
             alt="Sun Pharma"
-            width={70}
-            height={70}
+            width={60}
+            height={60}
             className="mx-auto"
           />
         </div>

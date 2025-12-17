@@ -88,7 +88,7 @@ export default function SpeakerDetailsPage() {
             </p>
 
             <Image
-              src="/sun_pharma.png"
+              src="/Sun_Pharma.png"
               alt="Sun Pharma"
               width={60}
               height={60}

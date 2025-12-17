@@ -247,10 +247,10 @@ export default function ElearningDetailPage() {
             EDUCATIONAL GRANT BY
           </p>
           <Image
-            src="/sun_pharma.png"
+            src="/Sun_Pharma.png"
             alt="Sun Pharma"
-            width={120}
-            height={80}
+            width={60}
+            height={60}
             className="mx-auto object-contain"
           />
         </div>
