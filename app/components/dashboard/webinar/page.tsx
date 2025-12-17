@@ -124,7 +124,7 @@ export default function WebinarList() {
         {webinars.map((w) => (
           <article
             key={w.id}
-            className="flex flex-col bg-white rounded-2xl p-4 shadow-md hover:shadow-lg transition"
+            className="flex flex-col bg-white rounded-2xl p-4 overflow-hidden flex flex-col card-shadow transform transition-all duration-300 hover:-translate-y-2"
           >
             {/* Image */}
             <div className="rounded-xl overflow-hidden">

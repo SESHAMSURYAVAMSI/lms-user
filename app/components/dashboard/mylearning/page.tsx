@@ -55,7 +55,7 @@ export default function MyLearningPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by title"
-          className="pl-10 pr-3 py-2.5 border rounded-lg w-full focus:ring-2 focus:ring-blue-200 outline-none"
+          className="pl-10 pr-5 py-2 w-full border rounded-lg focus:ring-2 focus:ring-[#1F5C9E]"
         />
       </div>
 
@@ -64,8 +64,13 @@ export default function MyLearningPage() {
         {filteredCourses.map((course) => (
           <div
             key={course.id}
-            className="bg-white rounded-2xl overflow-hidden shadow hover:shadow-lg transition flex flex-col"
-          >
+  className="
+    bg-white rounded-2xl overflow-hidden flex flex-col
+    card-shadow
+    transform transition-all duration-300
+    hover:-translate-y-2
+  "
+>
             {/* Image */}
             <Image
               src={course.image}

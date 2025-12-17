@@ -71,7 +71,8 @@ export default function ProfileComponent({ initialData }: Props) {
   };
 
   return (
-    <div className="bg-[#F6FAFF] p-6 sm:p-8 rounded-xl">
+    <div className="bg-[#F6FAFF] p-6 sm:p-8 rounded-xl flex flex-col bg-[#F6FAFF] rounded-2xl p-4 overflow-hidden flex flex-col card-shadow transform transition-all duration-300 hover:-translate-y-2"
+    >
       {/* PROFILE PHOTO */}
       <div className="mb-8 border-b pb-6 border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -237,7 +238,7 @@ export default function ProfileComponent({ initialData }: Props) {
         </div>
 
         {/* SUBMIT */}
-        <div className="flex justify-start pt-4">
+        <div className="flex justify-center pt-4">
           <Button
             type="submit"
             disabled={isUpdating}

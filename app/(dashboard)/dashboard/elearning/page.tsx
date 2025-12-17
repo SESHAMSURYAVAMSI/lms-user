@@ -7,7 +7,7 @@ import { ELEARNING_COURSES } from "@/app/data/elearning/elearning";
 import type { ElearningCourse } from "@/app/data/elearning/elearning";
 
 export default function ElearningPage() {
-  const [q, ] = useState("");
+  const [q, setQ] = useState(""); // ✅ fixed
   const [open, setOpen] = useState(false);
   const [selected, setSelected] =
     useState<ElearningCourse | null>(null);
@@ -28,6 +28,17 @@ export default function ElearningPage() {
           E-Learning
         </h1>
 
+        {/* 🔍 Search Input */}
+        <div className="mb-6">
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search courses..."
+            className="w-full md:w-96 px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[#1F5C9E]"
+          />
+        </div>
+
+        {/* 📚 Courses Grid */}
         <div
           className="grid gap-6"
           style={{
@@ -46,6 +57,7 @@ export default function ElearningPage() {
           ))}
         </div>
 
+        {/* 📝 Register Modal */}
         <RegisterModal
           open={open}
           onClose={() => setOpen(false)}

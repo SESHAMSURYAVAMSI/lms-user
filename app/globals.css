@@ -114,6 +114,15 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+
+.card-shadow:hover {
+  box-shadow:
+    0 12px 28px rgba(71, 111, 190, 0.35),
+    0 22px 55px rgba(96, 157, 223, 0.4);
+}
+
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

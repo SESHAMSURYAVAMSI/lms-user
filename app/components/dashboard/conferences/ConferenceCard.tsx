@@ -13,7 +13,7 @@
     const router = useRouter();
 
     return (
-      <article className="flex flex-col bg-white rounded-3xl p-4 shadow-sm hover:shadow-md transition h-full">
+    <article className="flex flex-col bg-white rounded-2xl p-5 overflow-hidden flex flex-col card-shadow transform transition-all duration-300 hover:-translate-y-2">
 
         {/* IMAGE */}
         <div

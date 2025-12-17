@@ -117,7 +117,7 @@ export default function ElearningPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search courses..."
-          className="w-full md:w-96 px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1F5C9E]"
+          className="w-full sm:w-96 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
         />
       </div>
 

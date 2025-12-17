@@ -9,7 +9,7 @@ export default function SpeakerCard({ speaker }: { speaker: Speaker }) {
   return (
     <Link
       href={`/dashboard/speakers/${speaker.id}`}
-      className="border rounded-xl p-4 bg-white hover:shadow-lg transition flex gap-4"
+      className="border rounded-xl p-4 bg-white hover:shadow-lg transition flex gap-4 card-shadow transform transition-all duration-300 hover:-translate-y-2"
     >
       <Image
         src={speaker.photo}
