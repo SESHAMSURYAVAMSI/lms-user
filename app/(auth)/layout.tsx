@@ -40,12 +40,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* Stats Section */}
         <div className="flex flex-wrap justify-center gap-6 px-6">
           {/* Card 1 - USI Webinars */}
-          <div className="bg-white/40 rounded-xl p-4 w-60 h-56 flex flex-col items-center justify-between backdrop-blur-sm">
+          <div className="bg-white/40 rounded-xl p-4 w-68 h-56 flex flex-col items-center justify-between backdrop-blur-sm">
             <Image
               src="/usiw.png"
               alt="Events"
-              width={100}
-              height={100}
+              width={150}
+              height={150}
               className="mb-2"
             />
             <p className="text-lg font-bold text-[#1F5C9E]">USI Webinars</p>
@@ -53,12 +53,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </div>
 
           {/* Card 2 - Smart Learning Program */}
-          <div className="bg-white/40 rounded-xl p-4 w-60 h-56 flex flex-col items-center justify-between backdrop-blur-sm">
+          <div className="bg-white/40 rounded-xl p-4 w-68 h-56 flex flex-col items-center justify-between backdrop-blur-sm">
             <Image
               src="/slc.png"
               alt="Smart Learning"
-              width={100}
-              height={100}
+              width={150}
+              height={150}
               className="mb-2"
             />
             <p className="text-lg font-bold text-[#1F5C9E]">Smart Learning Courses</p>
@@ -66,12 +66,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </div>
 
           {/* Card 3 - Live Operative Workshops */}
-          <div className="bg-white/40 rounded-xl p-4 w-60 h-56 flex flex-col items-center justify-between backdrop-blur-sm">
+          <div className="bg-white/40 rounded-xl p-4 w-68 h-56 flex flex-col items-center justify-between backdrop-blur-sm">
             <Image
               src="/low.png"
               alt="Workshops"
-              width={100}
-              height={100}
+              width={150}
+              height={150}
               className="mb-2"
             />
             <p className="text-lg font-bold text-[#1F5C9E]">Live Operative Workshops</p>
@@ -79,12 +79,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </div>
 
           {/* Card 4 - e-Learning Courses */}
-          <div className="bg-white/40 rounded-xl p-4 w-60 h-56 flex flex-col items-center justify-between backdrop-blur-sm">
+          <div className="bg-white/40 rounded-xl p-4 w-68 h-56 flex flex-col items-center justify-between backdrop-blur-sm">
             <Image
               src="/elp.png"
               alt="e-Learning"
-              width={100}
-              height={100}
+              width={150}
+              height={150}
               className="mb-2"
             />
             <p className="text-lg font-bold text-[#1F5C9E]">e-Learning Program</p>
@@ -92,12 +92,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </div>
 
           {/* Card 5 - Live Conferences */}
-          <div className="bg-white/40 rounded-xl p-4 w-60 h-56 flex flex-col items-center justify-between backdrop-blur-sm">
+          <div className="bg-white/40 rounded-xl p-4 w-68 h-56 flex flex-col items-center justify-between backdrop-blur-sm">
             <Image
               src="/login-speaker.png"
               alt="Conferences"
-              width={100}
-              height={100}
+              width={150}
+              height={150}
               className="mb-2"
             />
             <p className="text-lg font-bold text-[#1F5C9E]">Live Conferences</p>
