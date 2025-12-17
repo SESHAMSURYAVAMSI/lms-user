@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="absolute right-2 bottom-2 flex items-center gap-1 mr-2 mb-2">
           <span className="mr-1">Educational Grant By</span>
           <Image
-            src="/sun_pharma.png"
+            src="/Sun_Pharma.png"
             alt="Sun Pharma"
             width={40}
             height={40}
