@@ -1,72 +1,80 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import type { ProfileData } from "@/app/types/profile"; // Adjust path if needed
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-interface UserContextType {
-  user: ProfileData | null;
+type User = {
+  profilePhoto?: string;
+  fullName?: string;
+  prefix?: string;
+  designation?: string;
+  affiliationHospital?: string;
+  mobile?: string;
+  email?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  pincode?: string;
+};
+
+type UserContextType = {
+  user: User | null;
   loading: boolean;
-  error: string | null;
-  setUser: (user: ProfileData | null) => void; // <-- ADD THIS FUNCTION
-}
+  updateUser: (data: Partial<User>) => void;
+};
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+const UserContext = createContext<UserContextType | null>(null);
 
-export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<ProfileData | null>(null);
+const STORAGE_KEY = "user_profile";
+
+export function UserProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
+  /* LOAD USER FROM LOCAL STORAGE */
   useEffect(() => {
-    const fetchUser = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const token = localStorage.getItem("token"); // Ensure this is the correct key
-        if (!token) {
-          // No need to throw an error, just means user is not logged in.
-          // The header can show a default state.
-          setLoading(false);
-          return;
-        }
-
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
-        const response = await fetch(`${backendUrl}/auth/me`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch user data.");
-        }
-
-        const data = await response.json();
-        if (data.success) {
-          setUser(data.user);
-        } else {
-          throw new Error(data.error || "Failed to parse user data.");
-        }
-      } catch (err: Error | unknown) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      setUser(JSON.parse(stored));
+    }
+    setLoading(false);
   }, []);
 
-  // The value now includes the 'setUser' function
-  const value = { user, loading, error, setUser };
+  /* ✅ UPDATE USER (SYNC HEADER + PROFILE) */
+  const updateUser = (data: Partial<User>) => {
+    setUser((prev) => {
+      const updated = { ...prev, ...data };
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(updated)
+      );
+      return updated;
+    });
+  };
 
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
-};
+  return (
+    <UserContext.Provider
+      value={{ user, loading, updateUser }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
+}
 
 export const useUser = () => {
-  const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error('useUser must be used within a UserProvider');
+  const ctx = useContext(UserContext);
+  if (!ctx) {
+    throw new Error(
+      "useUser must be used inside UserProvider"
+    );
   }
-  return context;
+  return ctx;
 };
-

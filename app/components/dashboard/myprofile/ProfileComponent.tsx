@@ -13,40 +13,39 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import { useUser } from "@/app/context/UserContext";
 
 interface Props {
   initialData: ProfileData;
 }
 
-const STORAGE_KEY = "user_profile";
-
 export default function ProfileComponent({ initialData }: Props) {
+  const { user, updateUser } = useUser();
+
   const [form, setForm] = useState<ProfileData>(initialData);
   const [previewPhoto, setPreviewPhoto] = useState<string>(
     initialData.profilePhoto || "/profile.jpeg"
   );
   const [isUpdating, setIsUpdating] = useState(false);
 
-  /* ---------------- LOAD FROM LOCAL STORAGE ---------------- */
+  /* ✅ SYNC FORM FROM CONTEXT */
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      setForm(parsed);
-      setPreviewPhoto(parsed.profilePhoto || "/profile.jpeg");
+    if (user) {
+      setForm(user as ProfileData);
+      setPreviewPhoto(user.profilePhoto || "/profile.jpeg");
     }
-  }, []);
+  }, [user]);
 
-  /* ---------------- SAVE TO LOCAL STORAGE ---------------- */
-  const saveToLocalStorage = (data: ProfileData) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  };
-
-  const handleChange = (name: keyof ProfileData, value: string) => {
+  const handleChange = (
+    name: keyof ProfileData,
+    value: string
+  ) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
@@ -59,20 +58,24 @@ export default function ProfileComponent({ initialData }: Props) {
     }
   };
 
+  /* ✅ UPDATE CONTEXT (HEADER UPDATES INSTANTLY) */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsUpdating(true);
 
     setTimeout(() => {
-      saveToLocalStorage({ ...form, profilePhoto: previewPhoto });
+      updateUser({
+        ...form,
+        profilePhoto: previewPhoto,
+      });
       setIsUpdating(false);
       alert("Profile updated successfully!");
     }, 600);
   };
 
   return (
-    <div className="bg-[#F6FAFF] p-6 sm:p-8 rounded-xl flex flex-col bg-[#F6FAFF] rounded-2xl p-4 overflow-hidden flex flex-col card-shadow transform transition-all duration-300 hover:-translate-y-2"
-    >
+    <div className="bg-[#F6FAFF] rounded-2xl p-6 sm:p-8 card-shadow">
+      
       {/* PROFILE PHOTO */}
       <div className="mb-8 border-b pb-6 border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -84,9 +87,10 @@ export default function ProfileComponent({ initialData }: Props) {
             src={previewPhoto}
             alt="Profile Photo"
             className="rounded-full object-cover w-[100px] h-[100px] border-4 border-white shadow-md"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "/profile.jpeg";
-            }}
+            onError={(e) =>
+              ((e.target as HTMLImageElement).src =
+                "/profile.jpeg")
+            }
           />
 
           <div>
@@ -113,20 +117,25 @@ export default function ProfileComponent({ initialData }: Props) {
 
       {/* PROFILE FORM */}
       <form onSubmit={handleSubmit} className="space-y-6">
+        
         {/* Full Name + Prefix */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label>Full Name</Label>
             <Input
               value={form.fullName || ""}
-              onChange={(e) => handleChange("fullName", e.target.value)}
+              onChange={(e) =>
+                handleChange("fullName", e.target.value)
+              }
             />
           </div>
           <div className="space-y-2">
             <Label>Prefix</Label>
             <Input
               value={form.prefix || ""}
-              onChange={(e) => handleChange("prefix", e.target.value)}
+              onChange={(e) =>
+                handleChange("prefix", e.target.value)
+              }
             />
           </div>
         </div>
@@ -147,7 +156,10 @@ export default function ProfileComponent({ initialData }: Props) {
             <Input
               value={form.affiliationHospital || ""}
               onChange={(e) =>
-                handleChange("affiliationHospital", e.target.value)
+                handleChange(
+                  "affiliationHospital",
+                  e.target.value
+                )
               }
             />
           </div>
@@ -159,7 +171,9 @@ export default function ProfileComponent({ initialData }: Props) {
             <Label>Mobile No.</Label>
             <Input
               value={form.mobile || ""}
-              onChange={(e) => handleChange("mobile", e.target.value)}
+              onChange={(e) =>
+                handleChange("mobile", e.target.value)
+              }
             />
           </div>
           <div className="space-y-2">
@@ -178,7 +192,9 @@ export default function ProfileComponent({ initialData }: Props) {
             <Label>Country</Label>
             <Select
               value={form.country || ""}
-              onValueChange={(v) => handleChange("country", v)}
+              onValueChange={(v) =>
+                handleChange("country", v)
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="-Select-" />
@@ -186,7 +202,9 @@ export default function ProfileComponent({ initialData }: Props) {
               <SelectContent>
                 <SelectItem value="India">India</SelectItem>
                 <SelectItem value="USA">USA</SelectItem>
-                <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                <SelectItem value="United Kingdom">
+                  United Kingdom
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -195,15 +213,23 @@ export default function ProfileComponent({ initialData }: Props) {
             <Label>State</Label>
             <Select
               value={form.state || ""}
-              onValueChange={(v) => handleChange("state", v)}
+              onValueChange={(v) =>
+                handleChange("state", v)
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="-Select-" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Telangana">Telangana</SelectItem>
-                <SelectItem value="Maharashtra">Maharashtra</SelectItem>
-                <SelectItem value="Karnataka">Karnataka</SelectItem>
+                <SelectItem value="Telangana">
+                  Telangana
+                </SelectItem>
+                <SelectItem value="Maharashtra">
+                  Maharashtra
+                </SelectItem>
+                <SelectItem value="Karnataka">
+                  Karnataka
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -215,15 +241,23 @@ export default function ProfileComponent({ initialData }: Props) {
             <Label>City</Label>
             <Select
               value={form.city || ""}
-              onValueChange={(v) => handleChange("city", v)}
+              onValueChange={(v) =>
+                handleChange("city", v)
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="-Select-" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Hyderabad">Hyderabad</SelectItem>
-                <SelectItem value="Mumbai">Mumbai</SelectItem>
-                <SelectItem value="Bengaluru">Bengaluru</SelectItem>
+                <SelectItem value="Hyderabad">
+                  Hyderabad
+                </SelectItem>
+                <SelectItem value="Mumbai">
+                  Mumbai
+                </SelectItem>
+                <SelectItem value="Bengaluru">
+                  Bengaluru
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -232,7 +266,9 @@ export default function ProfileComponent({ initialData }: Props) {
             <Label>Pincode</Label>
             <Input
               value={form.pincode || ""}
-              onChange={(e) => handleChange("pincode", e.target.value)}
+              onChange={(e) =>
+                handleChange("pincode", e.target.value)
+              }
             />
           </div>
         </div>
@@ -244,7 +280,11 @@ export default function ProfileComponent({ initialData }: Props) {
             disabled={isUpdating}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg w-32"
           >
-            {isUpdating ? <Loader2 className="animate-spin" /> : "Update"}
+            {isUpdating ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Update"
+            )}
           </Button>
         </div>
       </form>

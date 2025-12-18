@@ -22,6 +22,8 @@ export const courses: Course[] = [
     image: "/images/learning.png",
     title: "USI ISU Webinar - Renal Transplantation Subsection",
     date: "17 Apr 2026 - 18 Apr 2026",
+    // startDate: "2026-04-17",
+    // endDate: "2026-04-18",
     time: "7:30 PM to 9:30 PM",
     type: "USI Webinar",
   },

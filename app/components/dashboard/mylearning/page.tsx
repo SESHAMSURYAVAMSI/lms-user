@@ -21,6 +21,8 @@ type MyLearningWebinar = {
   time?: string;
   mode?: string;
   type?: string;
+  startDate?: string;
+  endDate?: string;
 };
 
 export default function MyLearningPage() {
@@ -60,7 +62,7 @@ export default function MyLearningPage() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredCourses.map((course) => (
           <div
             key={course.id}
@@ -72,56 +74,44 @@ export default function MyLearningPage() {
   "
 >
             {/* Image */}
+            <div className="rounded-xl overflow-hidden">
             <Image
               src={course.image}
               alt={course.title}
               width={480}
-              height={280}
-              className="object-cover w-full h-48"
+              height={260}
+              className="object-cover w-full h-44"
             />
+             </div>
 
-            {/* Content */}
-            <div className="p-5 flex flex-col flex-grow">
+            
+            
+            <div className="p-4 flex flex-col flex-grow">
               {/* Meta */}
-              <div className="text-sm text-gray-500 space-y-2">
-                {course.date && (
-                  <div className="flex items-center gap-2">
-                    <CalendarDays size={14} />
-                    <span>{course.date}</span>
-                  </div>
-                )}
+              <div className="text-sm flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <CalendarDays size={14} />
+                  {course.startDate} - {course.endDate}
+                </div>
 
-                {course.time && (
-                  <div className="flex items-center gap-2">
-                    <Clock size={14} />
-                    <span>{course.time}</span>
+                {/* TIME + GREEN DOT */}
+                <div className="flex items-center gap-2">
+                  <Clock size={14} />
+                  <span>{course.time}</span>
 
-                    {/* GREEN ROUND DOT */}
-                    {course.mode && (
-                      <>
-                        <span className="ml-2 w-2.5 h-2.5 rounded-full bg-green-500 border border-black inline-block" />
-                        <span className="font-medium text-green-600">
-                          {course.mode}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                )}
+                  {/* GREEN ROUND DOT */}
+                  <span className="ml-5 w-2.5 h-2.5 rounded-full bg-green-500 border border-black inline-block" />
 
-                {course.type && (
-                  <div className="flex items-center gap-2">
-                    <Tag size={14} />
-                    <span className="font-medium text-gray-700">
-                      {course.type}
-                    </span>
-                  </div>
-                )}
+                  <span className="text-green-600 font-medium">
+                    {course.mode}
+                  </span>
+                </div>
               </div>
 
               {/* Title */}
-              <h2 className="mt-3 text-lg font-semibold text-[#0d2540] min-h-[3rem]">
+              <h3 className="mt-2 text-base font-semibold text-[#252641] line-clamp-2 min-h-[3rem]">
                 {course.title}
-              </h2>
+              </h3>
 
               {/* Button */}
               <div className="mt-auto pt-4 flex justify-center">
