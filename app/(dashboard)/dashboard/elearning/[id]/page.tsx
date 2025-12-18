@@ -74,16 +74,17 @@ export default function ElearningDetailPage() {
         {/* ================= LEFT ================= */}
         <div className="space-y-6">
 
-          {/* IMAGE */}
-          <div className="bg-white rounded-2xl shadow overflow-hidden">
-            <Image
-              src={course.image}
-              alt={course.title}
-              width={1200}
-              height={500}
-              className="w-full h-[360px] object-cover"
-            />
-          </div>
+{/* VIDEO PLAYER */}
+<div className="rounded-2xl overflow-hidden aspect-video shadow">
+  <iframe
+    src={course.videoUrl}
+    className="w-full h-full"
+    allow="autoplay; fullscreen"
+    allowFullScreen
+  />
+</div>
+
+
 
           {/* META */}
           <div className="bg-white rounded-2xl shadow p-4 space-y-2">

@@ -15,6 +15,12 @@ export default function PreviewVideoModal({
 }) {
   if (!open) return null;
 
+  // ✅ detect YouTube / iframe URLs
+  const isEmbed =
+    videoUrl.includes("youtube.com") ||
+    videoUrl.includes("youtu.be") ||
+    videoUrl.includes("vimeo.com");
+
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center">
       {/* Overlay */}
@@ -24,7 +30,7 @@ export default function PreviewVideoModal({
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl w-[92%] max-w-3xl shadow-xl z-50">
+      <div className="relative bg-white rounded-2xl w-[92%] max-w-3xl shadow-xl z-50 overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center px-5 py-3 border-b">
           <h3 className="text-sm font-semibold">
@@ -41,14 +47,27 @@ export default function PreviewVideoModal({
 
         {/* Video */}
         <div className="p-4">
-          <video
-            controls
-            autoPlay
-            className="w-full rounded-lg"
-          >
-            <source src={videoUrl} />
-            Your browser does not support the video tag.
-          </video>
+          <div className="aspect-video rounded-lg overflow-hidden bg-black">
+            {isEmbed ? (
+              /* ✅ YouTube / Vimeo */
+              <iframe
+                src={`${videoUrl}?autoplay=1`}
+                className="w-full h-full"
+                allow="autoplay; fullscreen"
+                allowFullScreen
+              />
+            ) : (
+              /* ✅ MP4 / local videos */
+              <video
+                controls
+                autoPlay
+                className="w-full h-full"
+              >
+                <source src={videoUrl} />
+                Your browser does not support the video tag.
+              </video>
+            )}
+          </div>
         </div>
       </div>
     </div>

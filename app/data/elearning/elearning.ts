@@ -28,6 +28,7 @@ export const ELEARNING_COURSES: ElearningCourse[] = [
     image: "/images/learning.png",
     price: 0,
     popularity: 90,
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     createdAt: "2026-04-17",
   },
   {
@@ -42,6 +43,7 @@ export const ELEARNING_COURSES: ElearningCourse[] = [
     image: "/images/learning.png",
     price: 499,
     popularity: 120,
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     createdAt: "2026-06-20",
   },
   {
@@ -56,6 +58,7 @@ export const ELEARNING_COURSES: ElearningCourse[] = [
     image: "/images/learning.png",
     price: 0,
     popularity: 60,
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     createdAt: "2025-11-02",
   },
   {
