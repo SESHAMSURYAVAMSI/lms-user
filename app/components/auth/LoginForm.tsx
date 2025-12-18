@@ -74,11 +74,13 @@ export default function LoginForm() {
             onChange={(e) => setForm({ identifier: e.target.value })}
           />
 
-          {/* reCAPTCHA */}
-          <ReCAPTCHA
-            sitekey="6Lc9Wy8sAAAAAB7R3aBN7JEOnCirYhAPwQmgqk_M"
-            onChange={(value) => setCaptchaValue(value)}
-          />
+<ReCAPTCHA
+  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+  onChange={(value) => setCaptchaValue(value)}
+  onExpired={() => setCaptchaValue(null)}
+/>
+
+
 
           {/* Error */}
           {error && (
