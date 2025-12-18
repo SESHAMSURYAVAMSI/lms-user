@@ -2,13 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import ReCAPTCHA from "react-google-recaptcha";
 import Image from "next/image";
 
+/* ✅ IMPORTANT: disable SSR for reCAPTCHA */
+const ReCAPTCHA = dynamic(
+  () => import("react-google-recaptcha"),
+  { ssr: false }
+);
+
 type LoginData = {
-  identifier: string; // Membership No, Email, or Phone
+  identifier: string;
 };
 
 const LOGIN_STORAGE_KEY = "mock_login_user";
@@ -22,7 +28,6 @@ export default function LoginForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Basic frontend validation
     if (!form.identifier.trim()) {
       setError("Please enter Membership No, Email, or Mobile No.");
       return;
@@ -35,7 +40,6 @@ export default function LoginForm() {
 
     setError(null);
 
-    // ✅ STORE LOGIN DATA IN LOCAL STORAGE
     const loginData = {
       identifier: form.identifier,
       isLoggedIn: true,
@@ -45,23 +49,23 @@ export default function LoginForm() {
     localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(loginData));
 
     alert("Login successful! (Frontend only)");
-
     router.push("/dashboard");
   };
 
   return (
     <div className="flex flex-col md:flex-row w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
-      {/* Left: Form */}
+      
+      {/* LEFT: FORM */}
       <div className="w-full md:w-1/2 p-6 md:p-10 bg-[#f0faff] flex items-center">
         <form
           onSubmit={handleSubmit}
           className="w-full max-w-md mx-auto space-y-4 px-2 font-poppins"
         >
-          <h1 className="text-2xl font-bold text-[#0d47a1] mb-6">
+          <h1 className="text-2xl font-bold text-[#0d47a1] mb-4">
             Login
           </h1>
 
-          <p className="text-l text-black-100 mb-2">
+          <p className="text-sm text-gray-700 mb-2">
             Search by USI membership number, registered email or phone number.
           </p>
 
@@ -69,18 +73,21 @@ export default function LoginForm() {
           <Input
             id="identifier"
             type="text"
-            placeholder="Enter Membership No, Email id or Mobile No."
+            placeholder="Enter Membership No, Email id or Mobile No"
             value={form.identifier}
-            onChange={(e) => setForm({ identifier: e.target.value })}
+            onChange={(e) =>
+              setForm({ identifier: e.target.value })
+            }
           />
 
-<ReCAPTCHA
-  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-  onChange={(value) => setCaptchaValue(value)}
-  onExpired={() => setCaptchaValue(null)}
-/>
-
-
+          {/* ✅ reCAPTCHA */}
+          <div className="pt-2">
+            <ReCAPTCHA
+              sitekey="6LfBXC8sAAAAAEUGOUN8B2XkFsov-bLIQoYzYLIf"
+              onChange={(value) => setCaptchaValue(value)}
+              onExpired={() => setCaptchaValue(null)}
+            />
+          </div>
 
           {/* Error */}
           {error && (
@@ -90,7 +97,7 @@ export default function LoginForm() {
           {/* Submit */}
           <Button
             type="submit"
-            className="w-full font-medium bg-orange-500 hover:bg-[#0d47a1] text-white mt-4"
+            className="w-full bg-orange-500 hover:bg-[#0d47a1] text-white"
           >
             Login
           </Button>
@@ -110,14 +117,14 @@ export default function LoginForm() {
         </form>
       </div>
 
-      {/* Right: Image */}
+      {/* RIGHT: IMAGE */}
       <div className="hidden md:flex w-1/2 items-center justify-center p-4 bg-white">
         <Image
           src="/images/login.png"
           alt="Login Illustration"
           width={300}
           height={300}
-          className="object-cover rounded-r-2xl"
+          className="object-cover"
         />
       </div>
     </div>
