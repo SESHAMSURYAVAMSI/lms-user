@@ -46,7 +46,7 @@ export const COURSE_DETAIL: CourseDetail = {
 
   content: [
     {
-      week: "Section 1: Introduction",
+      week: "Week 1: Introduction",
       lectures: 3,
       durationMinutes: 45,
       items: [
@@ -68,7 +68,7 @@ export const COURSE_DETAIL: CourseDetail = {
     },
 
     {
-      week: "Section 2: Core Concepts",
+      week: "Week 2: Core Concepts",
       lectures: 4,
       durationMinutes: 65,
       items: [

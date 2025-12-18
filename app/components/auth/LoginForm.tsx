@@ -76,7 +76,7 @@ export default function LoginForm() {
 
           {/* reCAPTCHA */}
           <ReCAPTCHA
-            sitekey="your_site_key_here"
+            sitekey="6Lc9Wy8sAAAAAB7R3aBN7JEOnCirYhAPwQmgqk_M"
             onChange={(value) => setCaptchaValue(value)}
           />
 
