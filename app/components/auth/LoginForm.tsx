@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
-/* ✅ IMPORTANT: disable SSR for reCAPTCHA */
+/* ✅ Disable SSR for reCAPTCHA */
 const ReCAPTCHA = dynamic(
   () => import("react-google-recaptcha"),
   { ssr: false }
@@ -18,6 +18,13 @@ type LoginData = {
 };
 
 const LOGIN_STORAGE_KEY = "mock_login_user";
+
+/* ✅ Dummy allowed users */
+const DUMMY_USERS = [
+  "USI12345",
+  "demo@usi.com",
+  "9876543210",
+];
 
 export default function LoginForm() {
   const router = useRouter();
@@ -38,6 +45,12 @@ export default function LoginForm() {
       return;
     }
 
+    /* ✅ Dummy login validation */
+    if (!DUMMY_USERS.includes(form.identifier.trim())) {
+      setError("Invalid login credentials.");
+      return;
+    }
+
     setError(null);
 
     const loginData = {
@@ -46,26 +59,29 @@ export default function LoginForm() {
       loginTime: new Date().toISOString(),
     };
 
-    localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(loginData));
+    localStorage.setItem(
+      LOGIN_STORAGE_KEY,
+      JSON.stringify(loginData)
+    );
 
-    alert("Login successful! (Frontend only)");
+    alert("Login successful! (Dummy user)");
     router.push("/dashboard");
   };
 
   return (
     <div className="flex flex-col md:flex-row w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
       
-      {/* LEFT: FORM */}
+      {/* LEFT – FORM */}
       <div className="w-full md:w-1/2 p-6 md:p-10 bg-[#f0faff] flex items-center">
         <form
           onSubmit={handleSubmit}
           className="w-full max-w-md mx-auto space-y-4 px-2 font-poppins"
         >
-          <h1 className="text-2xl font-bold text-[#0d47a1] mb-4">
+          <h1 className="text-2xl font-bold text-[#0d47a1]">
             Login
           </h1>
 
-          <p className="text-sm text-gray-700 mb-2">
+          <p className="text-sm text-gray-700">
             Search by USI membership number, registered email or phone number.
           </p>
 
@@ -80,7 +96,7 @@ export default function LoginForm() {
             }
           />
 
-          {/* ✅ reCAPTCHA */}
+          {/* reCAPTCHA */}
           <div className="pt-2">
             <ReCAPTCHA
               sitekey="6LfBXC8sAAAAAEUGOUN8B2XkFsov-bLIQoYzYLIf"
@@ -91,7 +107,9 @@ export default function LoginForm() {
 
           {/* Error */}
           {error && (
-            <p className="text-sm text-red-600">{error}</p>
+            <p className="text-sm text-red-600">
+              {error}
+            </p>
           )}
 
           {/* Submit */}
@@ -117,7 +135,7 @@ export default function LoginForm() {
         </form>
       </div>
 
-      {/* RIGHT: IMAGE */}
+      {/* RIGHT – IMAGE */}
       <div className="hidden md:flex w-1/2 items-center justify-center p-4 bg-white">
         <Image
           src="/images/login.png"
