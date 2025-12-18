@@ -40,7 +40,6 @@ export default function ElearningDetailPage() {
 
   if (!course) return <div className="p-8">Course not found</div>;
 
-  /* ---------- totals ---------- */
   const sections = COURSE_DETAIL.content.length;
   const totalLectures = COURSE_DETAIL.content.reduce(
     (s, w) => s + w.lectures,
@@ -68,23 +67,20 @@ export default function ElearningDetailPage() {
         </span>
       </div>
 
-      {/* ================= LAYOUT ================= */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6">
 
         {/* ================= LEFT ================= */}
         <div className="space-y-6">
 
-{/* VIDEO PLAYER */}
-<div className="rounded-2xl overflow-hidden aspect-video shadow">
-  <iframe
-    src={course.videoUrl}
-    className="w-full h-full"
-    allow="autoplay; fullscreen"
-    allowFullScreen
-  />
-</div>
-
-
+          {/* VIDEO PLAYER */}
+          <div className="rounded-2xl overflow-hidden aspect-video shadow">
+            <iframe
+              src={course.videoUrl}
+              className="w-full h-full"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+            />
+          </div>
 
           {/* META */}
           <div className="bg-white rounded-2xl shadow p-4 space-y-2">
@@ -111,40 +107,9 @@ export default function ElearningDetailPage() {
             </h1>
           </div>
 
-          {/* WHAT YOU’LL LEARN */}
-          <section className="bg-white rounded-2xl shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">
-              What you’ll learn?
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {COURSE_DETAIL.learn.map((item, i) => (
-                <div key={i} className="flex gap-2 text-sm">
-                  <CheckCircle2 size={16} className="text-green-600 mt-0.5" />
-                  {item}
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* COURSE INCLUDES */}
-          <section className="bg-white rounded-2xl shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">
-              This course includes
-            </h2>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-              {COURSE_DETAIL.includes.map((item, i) => (
-                <div key={i}>✔ {item}</div>
-              ))}
-            </div>
-          </section>
-
           {/* COURSE CONTENT */}
           <section className="bg-white rounded-2xl shadow p-6">
-            <h2 className="text-lg font-semibold mb-1">
-              Course content
-            </h2>
+            <h2 className="text-lg font-semibold mb-1">Course content</h2>
 
             <p className="text-sm text-gray-600 mb-4">
               {sections} sections • {totalLectures} lectures •{" "}
@@ -158,9 +123,7 @@ export default function ElearningDetailPage() {
                 return (
                   <div key={i}>
                     <button
-                      onClick={() =>
-                        setOpenIndex(open ? null : i)
-                      }
+                      onClick={() => setOpenIndex(open ? null : i)}
                       className={`w-full flex justify-between px-4 py-3 text-sm font-medium ${
                         open
                           ? "bg-[#1F5C9E] text-white"
@@ -170,9 +133,7 @@ export default function ElearningDetailPage() {
                       <div className="flex gap-2 items-center">
                         <ChevronDown
                           size={16}
-                          className={`transition ${
-                            open ? "rotate-180" : ""
-                          }`}
+                          className={`transition ${open ? "rotate-180" : ""}`}
                         />
                         {week.week}
                       </div>
@@ -188,7 +149,15 @@ export default function ElearningDetailPage() {
                           key={idx}
                           className="flex justify-between px-6 py-3 text-sm border-t"
                         >
-                          <span>{lec.title}</span>
+                          {/* ✅ CLICKABLE LECTURE TITLE */}
+                          <button
+                            onClick={() =>
+                              router.push("/dashboard/elearning/lecture")
+                            }
+                            className="text-left text-[#6FAEFF] hover:underline font-medium"
+                          >
+                            {lec.title}
+                          </button>
 
                           <div className="flex items-center gap-6">
                             {lec.preview && lec.videoUrl && (
@@ -216,29 +185,6 @@ export default function ElearningDetailPage() {
                 );
               })}
             </div>
-          </section>
-
-          {/* COURSE DESCRIPTION */}
-          <section className="bg-white rounded-2xl shadow p-6">
-            <h2 className="text-lg font-semibold mb-3">
-              Course Description
-            </h2>
-
-            {(showMore
-              ? COURSE_DETAIL.description
-              : COURSE_DETAIL.description.slice(0, 2)
-            ).map((para, i) => (
-              <p key={i} className="text-sm text-gray-700 mb-4">
-                {para}
-              </p>
-            ))}
-
-            <button
-              onClick={() => setShowMore(!showMore)}
-              className="text-sm font-medium text-[#1F5C9E]"
-            >
-              {showMore ? "Show less" : "Show more"}
-            </button>
           </section>
         </div>
 
