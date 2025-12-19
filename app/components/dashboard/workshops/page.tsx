@@ -194,7 +194,7 @@ export default function WebinarList() {
 
       {webinars.length === 0 && (
         <p className="text-gray-500 text-center mt-8">
-          No webinars found.
+          No Workshops found.
         </p>
       )}
     </div>
