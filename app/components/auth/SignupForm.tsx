@@ -173,9 +173,10 @@ export default function SignupForm() {
         {/* ✅ reCAPTCHA */}
         <div className="mb-4">
           <ReCAPTCHA
-            sitekey={
-              process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!
-            }
+            // sitekey={
+            //   process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!
+            // }
+            sitekey="Enter Your_Site_Key_Here"
             onChange={(v) => setCaptchaValue(v)}
             onExpired={() => setCaptchaValue(null)}
           />
