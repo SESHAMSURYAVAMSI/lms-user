@@ -1,107 +1,202 @@
-'use client';
-//This file is a client component in Next.js, which allows us to use hooks like useState and useEffect. 
+"use client";
+
+import { useMemo, useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { CalendarDays, Clock, ChevronDown } from "lucide-react";
+import { webinars as allWebinars } from "@/app/data/webinar";
 
-export default function ComingSoonPage() {
-  const calculateTimeLeft = () => {
-    const target = new Date("2025-08-01T00:00:00");
-    const now = new Date();
-    const difference = +target - +now;
-    let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+const TABS = ["live", "upcoming", "past"] as const;
+type Tab = (typeof TABS)[number];
+type Sort = "newest" | "popularity";
 
-    if (difference > 0) {
-      timeLeft = {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60),
-      };
-    }
-
-    return timeLeft;
-  };
-
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [isClient, setIsClient] = useState(false);
+export default function WebinarList() {
+  const [tab, setTab] = useState<Tab>("live");
+  const [q, setQ] = useState("");
+  const [sort, setSort] = useState<Sort>("newest");
+  const [sortOpen, setSortOpen] = useState(false);
+  const router = useRouter();
+  const now = new Date();
+  const sortRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setIsClient(true); 
-    setTimeLeft(calculateTimeLeft());
-
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
-    return () => clearInterval(timer);
+    function onDocClick(e: MouseEvent) {
+      if (!sortRef.current) return;
+      if (!sortRef.current.contains(e.target as Node)) setSortOpen(false);
+    }
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
   }, []);
 
+  const webinars = useMemo(() => {
+    const inTab = allWebinars.filter((w) => {
+      const s = new Date(w.startDate);
+      const e = new Date(w.endDate);
+      if (tab === "live") return s <= now && e >= now;
+      if (tab === "upcoming") return s > now;
+      return e < now;
+    });
+
+    const query = q.trim().toLowerCase();
+    const searched = query
+      ? inTab.filter((w) => w.title.toLowerCase().includes(query))
+      : inTab;
+
+    return searched.sort((a, b) =>
+      sort === "newest"
+        ? +new Date(b.startDate) - +new Date(a.startDate)
+        : (b.popularity ?? 0) - (a.popularity ?? 0)
+    );
+  }, [tab, q, sort, now]);
+
   return (
-    <main className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="text-center max-w-md w-full">
-        <motion.h1
-          className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          Divina is currently working hard on this page!
-        </motion.h1>
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-4 flex justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-[#252641]">
+            Smart Learning Program
+          </h1>
 
-        <motion.p
-          className="text-gray-500 mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          Website currently under maintenance
-        </motion.p>
-
-        <motion.div
-          className="flex justify-center mb-6"
-          initial={{ scale: 0.95 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Image
-            src="/images/comming-soon.png"
-            alt="Maintenance"
-            width={300}
-            height={300}
-            className="w-full max-w-xs"
-            priority
-          />
-        </motion.div>
-
-        {isClient && (
-          <div className="flex justify-center gap-4 text-lg font-semibold text-gray-800 mb-6">
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.days}</div>
-              <div className="text-sm text-gray-500">Days</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.hours}</div>
-              <div className="text-sm text-gray-500">Hours</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.minutes}</div>
-              <div className="text-sm text-gray-500">Minutes</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl">{timeLeft.seconds}</div>
-              <div className="text-sm text-gray-500">Seconds</div>
-            </div>
+          <div className="mt-3 flex gap-6 border-b pb-3">
+            {TABS.map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`capitalize pb-1 text-sm ${
+                  tab === t
+                    ? "text-[#1F5C9E] border-b-2 border-[#1F5C9E] font-semibold"
+                    : "text-gray-500 hover:text-[#1F5C9E]"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
 
-        <Link
-          href="https://saascraft.studio/"
-          className="inline-block bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition"
-        >
-         Owned by SaaScraft Studio (India) Pvt. Ltd.
-        </Link>
+        {/* Sort */}
+        <div ref={sortRef} className="relative">
+          <button
+            onClick={() => setSortOpen((s) => !s)}
+            className="flex items-center gap-2 rounded-md border px-3 py-1.5 bg-orange-50 text-orange-600 text-sm font-medium"
+          >
+            Sort By <ChevronDown size={14} />
+          </button>
+
+          {sortOpen && (
+            <div className="absolute right-0 mt-2 w-44 bg-white rounded-md border shadow-lg z-50">
+              <button
+                onClick={() => {
+                  setSort("newest");
+                  setSortOpen(false);
+                }}
+                className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
+              >
+                Newest First
+              </button>
+              <button
+                onClick={() => {
+                  setSort("popularity");
+                  setSortOpen(false);
+                }}
+                className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
+              >
+                Popularity
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </main>
+
+      {/* Search */}
+      <div className="mb-6">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search Program..."
+          className="w-full md:w-96 px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[#1F5C9E]"
+        />
+      </div>
+
+      {/* GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {webinars.map((w) => (
+          <article
+            key={w.id}
+            className="flex flex-col bg-white rounded-2xl p-4 overflow-hidden flex flex-col card-shadow transform transition-all duration-300 hover:-translate-y-2"
+          >
+            {/* Image */}
+            <div className="rounded-xl overflow-hidden">
+              <Image
+                src={w.image}
+                alt={w.title}
+                width={480}
+                height={260}
+                className="object-cover w-full h-44"
+              />
+            </div>
+
+            {/* Content */}
+            <div className="mt-3 flex flex-col flex-grow">
+              {/* Meta */}
+              <div className="text-sm flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <CalendarDays size={14} />
+                  {w.startDate} - {w.endDate}
+                </div>
+
+                {/* TIME + GREEN DOT */}
+                <div className="flex items-center gap-2">
+                  <Clock size={14} />
+                  <span>{w.time}</span>
+
+                  {/* GREEN ROUND DOT */}
+                  <span className="ml-5 w-2.5 h-2.5 rounded-full bg-green-500 border border-black inline-block" />
+
+                  <span className="text-green-600 font-medium">
+                    {w.mode}
+                  </span>
+                </div>
+              </div>
+
+              {/* Title */}
+              <h3 className="mt-4 text-base font-semibold text-[#252641] line-clamp-2 min-h-[3rem]">
+                {w.title}
+              </h3>
+
+              {/* Button */}
+              <div className="mt-auto pt-4 flex justify-center">
+                {w.price && w.price > 0 ? (
+                  <button
+                    onClick={() =>
+                      router.push(`/dashboard/webinar/${w.id}`)
+                    }
+                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-sm font-semibold w-full"
+                  >
+                    ₹{w.price} | Buy Now
+                  </button>
+                ) : (
+                  <button
+                    onClick={() =>
+                      router.push(`/dashboard/webinar/${w.id}`)
+                    }
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full text-sm font-semibold w-full"
+                  >
+                    Register Free
+                  </button>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {webinars.length === 0 && (
+        <p className="text-gray-500 text-center mt-8">
+          No webinars found.
+        </p>
+      )}
+    </div>
   );
 }

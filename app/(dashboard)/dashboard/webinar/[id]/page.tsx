@@ -154,7 +154,7 @@ export default function WebinarDetailPage() {
           <div className="bg-white rounded-2xl shadow p-4">
             <div className="flex gap-3 border-b pb-3">
               {(
-                ["overview", "faculty", "faq", "feedback", "quiz"] as TabType[]
+                ["overview", "faculty", "FAQ", "feedback", "quiz"] as TabType[]
               ).map((t) => (
                 <button
                   key={t}

@@ -23,15 +23,15 @@ export default function ElearningCourseCard({
 
       {/* IMAGE */}
       <div
-        className="rounded-2xl overflow-hidden cursor-pointer"
+        className="rounded-xl overflow-hidden cursor-pointer"
         onClick={goToDetail}
       >
         <Image
           src={course.image}
           alt={course.title}
-          width={500}
-          height={300}
-          className="object-cover w-full h-48"
+          width={480}
+          height={260}
+          className="object-cover w-full h-44"
         />
       </div>
 
