@@ -4,17 +4,19 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Clock, ChevronDown } from "lucide-react";
-import { webinars as allWebinars } from "@/app/data/webinar";
+
+import { workshops as allWorkshops } from "@/app/data/workshop/workshop";
 
 const TABS = ["live", "upcoming", "past"] as const;
 type Tab = (typeof TABS)[number];
 type Sort = "newest" | "popularity";
 
-export default function WebinarList() {
+export default function WorkshopList() {
   const [tab, setTab] = useState<Tab>("live");
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<Sort>("newest");
   const [sortOpen, setSortOpen] = useState(false);
+
   const router = useRouter();
   const now = new Date();
   const sortRef = useRef<HTMLDivElement | null>(null);
@@ -22,24 +24,29 @@ export default function WebinarList() {
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (!sortRef.current) return;
-      if (!sortRef.current.contains(e.target as Node)) setSortOpen(false);
+      if (!sortRef.current.contains(e.target as Node)) {
+        setSortOpen(false);
+      }
     }
     document.addEventListener("click", onDocClick);
     return () => document.removeEventListener("click", onDocClick);
   }, []);
 
-  const webinars = useMemo(() => {
-    const inTab = allWebinars.filter((w) => {
-      const s = new Date(w.startDate);
-      const e = new Date(w.endDate);
-      if (tab === "live") return s <= now && e >= now;
-      if (tab === "upcoming") return s > now;
-      return e < now;
+  const workshops = useMemo(() => {
+    const inTab = allWorkshops.filter((w) => {
+      const start = new Date(w.startDate);
+      const end = new Date(w.endDate);
+
+      if (tab === "live") return start <= now && end >= now;
+      if (tab === "upcoming") return start > now;
+      return end < now;
     });
 
     const query = q.trim().toLowerCase();
     const searched = query
-      ? inTab.filter((w) => w.title.toLowerCase().includes(query))
+      ? inTab.filter((w) =>
+          w.title.toLowerCase().includes(query)
+        )
       : inTab;
 
     return searched.sort((a, b) =>
@@ -51,7 +58,7 @@ export default function WebinarList() {
 
   return (
     <div className="p-6">
-      {/* Header */}
+      {/* HEADER */}
       <div className="mb-4 flex justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-[#252641]">
@@ -75,7 +82,7 @@ export default function WebinarList() {
           </div>
         </div>
 
-        {/* Sort */}
+        {/* SORT */}
         <div ref={sortRef} className="relative">
           <button
             onClick={() => setSortOpen((s) => !s)}
@@ -109,24 +116,24 @@ export default function WebinarList() {
         </div>
       </div>
 
-      {/* Search */}
+      {/* SEARCH */}
       <div className="mb-6">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search Program..."
+          placeholder="Search Workshop..."
           className="w-full md:w-96 px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[#1F5C9E]"
         />
       </div>
 
       {/* GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {webinars.map((w) => (
+        {workshops.map((w) => (
           <article
             key={w.id}
-            className="flex flex-col bg-white rounded-2xl p-4 overflow-hidden flex flex-col card-shadow transform transition-all duration-300 hover:-translate-y-2"
+            className="flex flex-col bg-white rounded-2xl p-4 card-shadow transform transition-all duration-300 hover:-translate-y-2"
           >
-            {/* Image */}
+            {/* IMAGE */}
             <div className="rounded-xl overflow-hidden">
               <Image
                 src={w.image}
@@ -137,51 +144,45 @@ export default function WebinarList() {
               />
             </div>
 
-            {/* Content */}
+            {/* CONTENT */}
             <div className="mt-3 flex flex-col flex-grow">
-              {/* Meta */}
               <div className="text-sm flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <CalendarDays size={14} />
-                  {w.startDate} - {w.endDate}
+                  {w.startDate} – {w.endDate}
                 </div>
 
-                {/* TIME + GREEN DOT */}
                 <div className="flex items-center gap-2">
                   <Clock size={14} />
                   <span>{w.time}</span>
 
-                  {/* GREEN ROUND DOT */}
                   <span className="ml-5 w-2.5 h-2.5 rounded-full bg-green-500 border border-black inline-block" />
-
                   <span className="text-green-600 font-medium">
                     {w.mode}
                   </span>
                 </div>
               </div>
 
-              {/* Title */}
               <h3 className="mt-4 text-base font-semibold text-[#252641] line-clamp-2 min-h-[3rem]">
                 {w.title}
               </h3>
 
-              {/* Button */}
-              <div className="mt-auto pt-4 flex justify-center">
+              <div className="mt-auto pt-4">
                 {w.price && w.price > 0 ? (
                   <button
                     onClick={() =>
-                      router.push(`/dashboard/webinar/${w.id}`)
+                      router.push(`/dashboard/workshops/${w.id}`)
                     }
-                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-sm font-semibold w-full"
+                    className="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-sm font-semibold"
                   >
                     ₹{w.price} | Buy Now
                   </button>
                 ) : (
                   <button
                     onClick={() =>
-                      router.push(`/dashboard/webinar/${w.id}`)
+                      router.push(`/dashboard/workshops/${w.id}`)
                     }
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full text-sm font-semibold w-full"
+                    className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full text-sm font-semibold"
                   >
                     Register Free
                   </button>
@@ -192,7 +193,7 @@ export default function WebinarList() {
         ))}
       </div>
 
-      {webinars.length === 0 && (
+      {workshops.length === 0 && (
         <p className="text-gray-500 text-center mt-8">
           No Workshops found.
         </p>
