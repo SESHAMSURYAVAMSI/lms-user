@@ -26,7 +26,7 @@ const sideTabs: SideTab[] = [
   { name: "My Learning", icon: FaBookOpen, baseUrl: "mylearning", subtabs: [] },
   { name: "USI Webinar", icon: FaVideo, baseUrl: "webinar", subtabs: [] },
   { name: "Smart Learning Program", icon: FaGraduationCap, baseUrl: "program", subtabs: [] },
-  { name: "Live Operative Workshops", icon: FaTools, baseUrl: "workshops", subtabs: [] },
+  { name: "Live Operative Workshops", icon: FaTools, baseUrl: "workshop", subtabs: [] },
   { name: "eLearning Courses", icon: FaLaptopCode, baseUrl: "elearning", subtabs: [] },
   { name: "Live Conferences", icon: FaCalendarAlt, baseUrl: "conferences", subtabs: [] },
   { name: "Speakers", icon: FaMicrophone, baseUrl: "speakers", subtabs: [] },

@@ -171,7 +171,7 @@ export default function WorkshopList() {
                 {w.price && w.price > 0 ? (
                   <button
                     onClick={() =>
-                      router.push(`/dashboard/workshops/${w.id}`)
+                      router.push(`/dashboard/workshop/${w.id}`)
                     }
                     className="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-sm font-semibold"
                   >
@@ -180,7 +180,7 @@ export default function WorkshopList() {
                 ) : (
                   <button
                     onClick={() =>
-                      router.push(`/dashboard/workshops/${w.id}`)
+                      router.push(`/dashboard/workshop/${w.id}`)
                     }
                     className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full text-sm font-semibold"
                   >

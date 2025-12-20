@@ -4,8 +4,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
-import { programs } from "@/app/data/program/program";
-import { quizByProgram, quizMetaByProgram } from "@/app/data/program/quiz";
+import { workshops } from "@/app/data/workshop/workshop";
+import {
+  quizByWorkshop,
+  quizMetaByWorkshop,
+} from "@/app/data/workshop/quiz";
 
 /* ================= TYPES ================= */
 type AnswerRecord = {
@@ -16,12 +19,16 @@ type AnswerRecord = {
 
 /* ================= HELPERS ================= */
 function formatMMSS(sec: number) {
-  const m = Math.floor(sec / 60).toString().padStart(2, "0");
-  const s = Math.floor(sec % 60).toString().padStart(2, "0");
+  const m = Math.floor(sec / 60)
+    .toString()
+    .padStart(2, "0");
+  const s = Math.floor(sec % 60)
+    .toString()
+    .padStart(2, "0");
   return `${m}:${s}`;
 }
 
-/* ================= TIMER ================= */
+/* ================= TIMER CIRCLE ================= */
 function TimerCircle({
   timeLeft,
   total,
@@ -80,15 +87,17 @@ function TimerCircle({
 }
 
 /* ================= MAIN ================= */
-export default function ProgramQuizRunnerClient() {
+export default function WorkshopQuizRunnerClient() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
 
-  const programId = Number(params.id);
-  const program = programs.find((p) => p.id === programId);
+  const workshopId = Number(params.id);
+  const workshop = workshops.find(
+    (w) => w.id === workshopId
+  );
 
-  const questions = quizByProgram[programId] ?? [];
-  const meta = quizMetaByProgram[programId] ?? {};
+  const questions = quizByWorkshop[workshopId] ?? [];
+  const meta = quizMetaByWorkshop[workshopId] ?? {};
   const perQuestionSeconds = meta.perQuestionSeconds ?? 150;
 
   const [index, setIndex] = useState(0);
@@ -121,7 +130,7 @@ export default function ProgramQuizRunnerClient() {
     if (timeLeft <= 0 && !finished) submitAnswer();
   }, [timeLeft, finished]);
 
-  if (!program || questions.length === 0) {
+  if (!workshop || questions.length === 0) {
     return <div className="p-8">Quiz not available</div>;
   }
 
@@ -165,33 +174,59 @@ export default function ProgramQuizRunnerClient() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
 
           {/* LEFT */}
-          <div className="flex justify-center">
-            <div className="bg-white rounded-2xl shadow-xl px-16 py-14 text-center max-w-md w-full">
-              <div className="mx-auto w-28 h-28 rounded-full bg-orange-100 flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full bg-orange-500 text-white flex flex-col items-center justify-center">
-                  <span className="text-xs">Your Score</span>
-                  <span className="text-xl font-bold">
-                    {score}/{questions.length}
-                  </span>
-                </div>
-              </div>
-
-              <h2 className="mt-6 text-lg font-semibold">
-                Congratulations 🎉
-              </h2>
-
+          <div>
+            <div className="flex items-center gap-2 text-sm mb-6">
+              <button
+                onClick={() => router.push("/dashboard/workshop")}
+                className="text-orange-600 hover:underline font-medium"
+              >
+                Workshop
+              </button>
+              <span>{">"}</span>
               <button
                 onClick={() =>
-                  router.push(`/dashboard/program/${programId}`)
+                  router.push(`/dashboard/workshop/${workshopId}`)
                 }
-                className="mt-6 px-8 py-2 bg-[#1F5C9E] text-white rounded-md font-semibold"
+                className="text-orange-600 hover:underline font-medium"
               >
-                BACK TO PROGRAM
+                {workshop.title}
               </button>
+              <span>{">"}</span>
+              <span className="text-gray-600">Quiz</span>
+            </div>
+
+            <h1 className="text-center text-xl font-semibold mb-10">
+              Quiz Result
+            </h1>
+
+            <div className="flex justify-center">
+              <div className="bg-white rounded-2xl shadow-xl px-16 py-14 text-center max-w-md w-full">
+                <div className="mx-auto w-28 h-28 rounded-full bg-orange-100 flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-full bg-orange-500 text-white flex flex-col items-center justify-center">
+                    <span className="text-xs">Your Score</span>
+                    <span className="text-xl font-bold">
+                      {score}/{questions.length}
+                    </span>
+                  </div>
+                </div>
+
+                <h2 className="mt-6 text-lg font-semibold">
+                  Congratulations 🎉
+                </h2>
+
+                <button
+                  onClick={() =>
+                    router.push(`/dashboard/workshop/${workshopId}`)
+                  }
+                  className="mt-6 px-8 py-2 bg-[#1F5C9E] text-white rounded-md font-semibold"
+                >
+                  BACK TO WORKSHOP
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* RIGHT – SUN PHARMA */}
+          {/* RIGHT – SPONSOR */}
           <div className="bg-white rounded-2xl shadow p-6 sticky top-6 h-fit flex flex-col items-center">
             <p className="text-xs text-gray-500 mb-4">
               EDUCATIONAL GRANT BY
@@ -216,7 +251,29 @@ export default function ProgramQuizRunnerClient() {
 
         {/* LEFT – QUIZ */}
         <div>
-          <h1 className="text-center font-semibold mb-4">Quiz</h1>
+          <div className="flex items-center gap-2 text-sm mb-4">
+            <button
+              onClick={() => router.push("/dashboard/workshop")}
+              className="text-orange-600 hover:underline font-medium"
+            >
+              Workshop
+            </button>
+            <span>{">"}</span>
+            <button
+              onClick={() =>
+                router.push(`/dashboard/workshop/${workshopId}`)
+              }
+              className="text-orange-600 hover:underline font-medium"
+            >
+              {workshop.title}
+            </button>
+            <span>{">"}</span>
+            <span className="text-gray-600">Quiz</span>
+          </div>
+
+          <h1 className="text-center font-semibold mb-4">
+            Quiz
+          </h1>
 
           <div className="bg-white rounded-xl shadow p-4 w-fit mx-auto mb-6">
             <TimerCircle
@@ -269,7 +326,7 @@ export default function ProgramQuizRunnerClient() {
           </div>
         </div>
 
-        {/* RIGHT – SUN PHARMA */}
+        {/* RIGHT – SPONSOR */}
         <div className="bg-white rounded-2xl shadow p-6 sticky top-6 h-fit flex flex-col items-center">
           <p className="text-xs text-gray-500 mb-4">
             EDUCATIONAL GRANT BY

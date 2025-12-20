@@ -11,15 +11,15 @@ import { faqByWorkshop } from "@/app/data/workshop/faq";
 import { feedbackByWorkshops } from "@/app/data/workshop/feedback";
 import { quizByWorkshop, quizMetaByWorkshop } from "@/app/data/workshop/quiz";
 
-import Modal from "@/app/components/dashboard/workshops/Modal";
-import RegisterForm from "@/app/components/dashboard/workshops/RegisterForm";
-import PurchaseForm from "@/app/components/dashboard/workshops/PurchaseForm";
+import Modal from "@/app/components/dashboard/workshop/Modal";
+import RegisterForm from "@/app/components/dashboard/workshop/RegisterForm";
+import PurchaseForm from "@/app/components/dashboard/workshop/PurchaseForm";
 
-import WorkshopOverview from "@/app/components/dashboard/workshops/tabs/WorkshopOverview";
-import WorkshopFaculty from "@/app/components/dashboard/workshops/tabs/WorkshopFaculty";
-import WorkshopFAQ from "@/app/components/dashboard/workshops/tabs/WorkshopFAQ";
-import WorkshopFeedback from "@/app/components/dashboard/workshops/tabs/WorkshopFeedback";
-import WorkshopQuiz from "@/app/components/dashboard/workshops/tabs/WorkshopQuiz";
+import WorkshopOverview from "@/app/components/dashboard/workshop/tabs/WorkshopOverview";
+import WorkshopFaculty from "@/app/components/dashboard/workshop/tabs/WorkshopFaculty";
+import WorkshopFAQ from "@/app/components/dashboard/workshop/tabs/WorkshopFAQ";
+import WorkshopFeedback from "@/app/components/dashboard/workshop/tabs/WorkshopFeedback";
+import WorkshopQuiz from "@/app/components/dashboard/workshop/tabs/WorkshopQuiz";
 
 import { CalendarDays, Clock } from "lucide-react";
 
