@@ -97,6 +97,10 @@ export default function SignupForm() {
         </h1>
 
         {/* Prefix */}
+        <div className="mb-3">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Prefix
+  </label>
         <Input
           id="prefix"
           placeholder="Eg: Dr, Prof, Mr, Ms"
@@ -104,8 +108,13 @@ export default function SignupForm() {
           onChange={handleInputChange}
           className="mb-3"
         />
+        </div>
 
         {/* Full Name */}
+                <div className="mb-3">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Full Name
+  </label>
         <Input
           id="fullName"
           placeholder="Enter Full Name"
@@ -113,8 +122,13 @@ export default function SignupForm() {
           onChange={handleInputChange}
           className="mb-3"
         />
+        </div>
 
         {/* Email */}
+                <div className="mb-3">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Email
+  </label>
         <Input
           id="email"
           type="email"
@@ -123,8 +137,13 @@ export default function SignupForm() {
           onChange={handleInputChange}
           className="mb-3"
         />
+        </div>
 
         {/* Mobile */}
+                <div className="mb-3">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Mobile
+  </label>
         <Input
           id="mobile"
           placeholder="Enter Mobile Number"
@@ -132,8 +151,13 @@ export default function SignupForm() {
           onChange={handleInputChange}
           className="mb-3"
         />
+        </div>
 
         {/* Qualification */}
+                <div className="mb-3">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Qualification
+  </label>
         <Input
           id="qualification"
           placeholder="Enter Qualification"
@@ -141,8 +165,13 @@ export default function SignupForm() {
           onChange={handleInputChange}
           className="mb-3"
         />
+        </div>
 
         {/* Affiliation */}
+                <div className="mb-3">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Affiliation
+  </label>
         <Input
           id="affiliation"
           placeholder="Enter Affiliation"
@@ -150,8 +179,13 @@ export default function SignupForm() {
           onChange={handleInputChange}
           className="mb-3"
         />
+        </div>
 
         {/* Country */}
+                <div className="mb-3">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Country
+  </label>
         <Select
           value={form.country}
           onValueChange={(value) =>
@@ -169,6 +203,7 @@ export default function SignupForm() {
             <SelectItem value="Australia">Australia</SelectItem>
           </SelectContent>
         </Select>
+        </div>
 
         {/* ✅ reCAPTCHA */}
         <div className="mb-4">
