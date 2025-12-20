@@ -3,7 +3,7 @@
   import Image from "next/image";
   import { useRouter } from "next/navigation";
   import { CalendarDays, Clock } from "lucide-react";
-  import type { LiveConference } from "@/app/data/liveConference";
+  import type { LiveConference } from "@/app/data/conferences/liveConference";
 
   export default function ConferenceCard({
     conference,
@@ -19,7 +19,7 @@
         <div
           className="rounded-2xl overflow-hidden cursor-pointer mb-3"
           onClick={() =>
-            router.push(`/dashboard/live-conference/${conference.id}`)
+            router.push(`/dashboard/conferences/${conference.id}`)
           }
         >
           <Image
@@ -58,7 +58,7 @@
         <h3
           className="mt-3 text-[15px] font-semibold text-[#252641] line-clamp-2 min-h-[40px] cursor-pointer"
           onClick={() =>
-            router.push(`/dashboard/live-conference/${conference.id}`)
+            router.push(`/dashboard/conferences/${conference.id}`)
           }
         >
           {conference.title}
@@ -68,7 +68,7 @@
         <div className="mt-auto pt-4">
           <button
             onClick={() =>
-              router.push(`/dashboard/webinar/${conference.id}`)
+              router.push(`/dashboard/conferences/${conference.id}`)
             }
             className={`w-full py-2 rounded-full text-sm font-semibold ${
               conference.price > 0

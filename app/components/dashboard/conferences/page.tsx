@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import ConferenceCard from "@/app/components/dashboard/conferences/ConferenceCard";
-import { LIVE_CONFERENCES } from "@/app/data/liveConference";
+import { LIVE_CONFERENCES } from "@/app/data/conferences/liveConference";
 
 export default function LiveConferencePage() {
   const [q, setQ] = useState("");

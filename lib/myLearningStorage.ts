@@ -1,6 +1,6 @@
 // app/lib/myLearningStorage.ts
 
-import { webinars } from "@/app/data/webinar";
+import { webinars } from "@/app/data/webinar/webinar";
 
 const STORAGE_KEY = "my_learning_webinars";
 

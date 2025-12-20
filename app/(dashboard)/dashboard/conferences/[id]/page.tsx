@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
-import { webinars } from "@/app/data/webinar";
+import { webinars } from "@/app/data/webinar/webinar";
 import { overviews } from "@/app/data/webinar/overview";
 import { facultyByWebinar } from "@/app/data/webinar/faculty";
 import { faqByWebinar } from "@/app/data/webinar/faq";
@@ -65,7 +65,7 @@ export default function WebinarDetailPage() {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       {/* BACK BUTTON */}
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <button
           type="button"
           onClick={() => router.back()}
@@ -73,7 +73,7 @@ export default function WebinarDetailPage() {
         >
           ← Back
         </button>
-      </div>
+      </div> */}
 
       {/* BREADCRUMB */}
       <div className="mb-4 flex items-center gap-2 text-sm">

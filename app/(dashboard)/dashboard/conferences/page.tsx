@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 import ConferenceCard from "@/app/components/dashboard/conferences/ConferenceCard";
-import { LIVE_CONFERENCES } from "@/app/data/liveConference";
+import { LIVE_CONFERENCES } from "@/app/data/conferences/liveConference";
 
 export default function LiveConferencePage() {
   const [search, setSearch] = useState("");

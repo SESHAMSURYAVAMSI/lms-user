@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
-import { webinars } from "@/app/data/webinar";
+import { webinars } from "@/app/data/webinar/webinar";
 import { overviews } from "@/app/data/webinar/overview";
 import { facultyByWebinar } from "@/app/data/webinar/faculty";
 import { faqByWebinar } from "@/app/data/webinar/faq";

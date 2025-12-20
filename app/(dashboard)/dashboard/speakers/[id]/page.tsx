@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { SPEAKERS } from "@/app/data/speakers";
-import { webinars } from "@/app/data/webinar"; // ✅ REAL DATA
+import { webinars } from "@/app/data/webinar/webinar"; // ✅ REAL DATA
 import SpeakerHeader from "@/app/components/dashboard/Speakers/SpeakerHeader";
 
 export default function SpeakerDetailsPage() {

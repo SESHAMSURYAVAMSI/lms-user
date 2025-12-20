@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
-import { webinars } from "@/app/data/webinar";
+import { webinars } from "@/app/data/webinar/webinar";
 import { quizByWebinar, quizMetaByWebinar } from "@/app/data/webinar/quiz";
 
 /* ================= TYPES ================= */

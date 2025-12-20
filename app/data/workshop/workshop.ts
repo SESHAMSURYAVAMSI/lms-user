@@ -2,7 +2,7 @@
 export const workshops = [
   {
     id: 1,
-    title: "USI ISU Program - Renal Transplantation Subsection",
+    title: "USI ISU Workshop - Renal Transplantation Subsection",
     startDate: "2026-04-17",
     endDate: "2026-04-18",
     time: "7:30 PM to 9:30 PM",
@@ -28,7 +28,7 @@ export const workshops = [
   },
   {
     id: 3,
-    title: "USI ISU Program - Pediatric Urology",
+    title: "USI ISU Workshop - Pediatric Urology",
     startDate: "2025-11-02",
     endDate: "2025-11-02",
     time: "6:00 PM to 8:00 PM",

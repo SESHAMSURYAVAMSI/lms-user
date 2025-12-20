@@ -4,7 +4,7 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Clock, ChevronDown } from "lucide-react";
-import { webinars as allWebinars } from "@/app/data/webinar";
+import { webinars as allWebinars } from "@/app/data/webinar/webinar";
 
 const TABS = ["live", "upcoming", "past"] as const;
 type Tab = (typeof TABS)[number];
